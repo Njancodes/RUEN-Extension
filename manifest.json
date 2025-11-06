@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "RUEN Extension",
+  "version": "1.0.0",
+  "description": "Encrypt your whatsapp messsages before sending it.",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://web.whatsapp.com/"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ],
+  "background": {
+    "scripts": [
+      "dist/background.js"
+    ],
+    "type": "module"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "commands": {
+    "encrypt-shortcut": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+B"
+      },
+      "description": "Shortcut to encrypt the message"
+    }
+  },
+  "action": {
+    "default_icon": "icons/extension_icon.svg"
+  },
+  "icons": {
+    "32": "icons/extension_icon.svg",
+    "64": "icons/extension_icon.svg"
+  }
+}

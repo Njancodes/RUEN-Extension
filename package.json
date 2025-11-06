@@ -4,7 +4,8 @@
   "description": "",
   "main": "rotatingcubes.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "esbuild background.js --bundle --outfile=dist/background.js --format=iife"
   },
   "repository": {
     "type": "git",
@@ -20,5 +21,8 @@
   "homepage": "https://github.com/Njancodes/RUEN-Extension#readme",
   "dependencies": {
     "mathjs": "^15.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.12"
   }
 }

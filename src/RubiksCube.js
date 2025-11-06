@@ -1,4 +1,4 @@
-import { matrix, clone, random, randomInt, pickRandom } from "mathjs";
+import { matrix, clone, pickRandom } from "./../node_modules/mathjs/lib/esm/index.js";
 
 function create3Matrix(def_value) {
     return matrix([[def_value, def_value, def_value], [def_value, def_value, def_value], [def_value, def_value, def_value]])
@@ -255,10 +255,10 @@ class Rubiks3Cube {
         let cfront = clone(this.#front);
 
         for (let i = 0; i < 3; i++) {
-            this.#back.set([i, 0], cup.get([i, 0]));
+            this.#back.set([i, 2], cup.get([i, 0]));
         }
         for (let i = 0; i < 3; i++) {
-            this.#down.set([i, 0], cback.get([i, 0]));
+            this.#down.set([i, 0], cback.get([i, 2]));
         }
         for (let i = 0; i < 3; i++) {
             this.#front.set([i, 0], cdown.get([i, 0]));
@@ -518,14 +518,6 @@ class Rubiks3Cube {
     }
 }
 
-let cube = new Rubiks3Cube();
 
-cube.writeTextToCube('The quick brown fox jumps over the lazy dog today.');
-
-cube.displayRubikcube()
-cube.executeMoves(Rubiks3Cube.generateRandomMoves(1000));
-cube.displayRubikcube()
-
-console.log(cube.readTextFromCube());
 
 export default Rubiks3Cube;
