@@ -1,8 +1,9 @@
-import { matrix, clone, index } from "mathjs";
-//Utilty func
+import { matrix, clone, random, randomInt, pickRandom } from "mathjs";
+
 function create3Matrix(def_value) {
     return matrix([[def_value, def_value, def_value], [def_value, def_value, def_value], [def_value, def_value, def_value]])
 }
+
 
 class Rubiks3Cube {
 
@@ -15,7 +16,7 @@ class Rubiks3Cube {
     #up;
     #down;
 
-    constructor(text) {
+    constructor() {
         this.#back = create3Matrix('X');
         this.#front = create3Matrix('X');
         this.#up = create3Matrix('X');
@@ -472,19 +473,59 @@ class Rubiks3Cube {
             }
         }
     }
+
+    static generateRandomMoves(length) {
+        let moves = []
+        let validMoves = ['R', 'L', 'U', 'D', 'F', 'B']
+        let modifiers = ['', "'"]
+        let previousMove = null;
+
+        let randomMove = pickRandom(validMoves);
+        let randomModifier = pickRandom(modifiers);
+        let currentMove = randomMove + randomModifier;
+
+        moves.push(currentMove);
+        previousMove = currentMove;
+
+        for (let i = 0; i < length - 1; i++) {
+            do {
+                randomMove = pickRandom(validMoves);
+                randomModifier = pickRandom(modifiers);
+                currentMove = randomMove + randomModifier;
+            } while (this.#conflictsWithPreviousMove(currentMove, previousMove));
+
+            moves.push(currentMove);
+            previousMove = moves[moves.length - 1];
+        }
+
+        return moves.join(' ');
+    }
+
+    static #conflictsWithPreviousMove(curr, prev) {
+
+        if (curr == null || prev == null) {
+            return true;
+        }
+
+        let currBase = curr[0];
+        let prevBase = prev[0];
+
+        if (currBase === prevBase) {
+            return true;
+        }
+
+        return false;
+    }
 }
 
+let cube = new Rubiks3Cube();
 
+cube.writeTextToCube('The quick brown fox jumps over the lazy dog today.');
 
-const cube = new Rubiks3Cube();
+cube.displayRubikcube()
+cube.executeMoves(Rubiks3Cube.generateRandomMoves(1000));
+cube.displayRubikcube()
 
+console.log(cube.readTextFromCube());
 
-cube.writeTextToCube('This is placeholder text for your design or layout.');
-
-cube.displayRubikcube();
-
-cube.executeMoves("U U'")
-
-console.log(cube.readTextFromCube())
-
-cube.displayRubikcube();
+export default Rubiks3Cube;
