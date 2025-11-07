@@ -10169,7 +10169,6 @@
   var currTab = null;
   browser.action.onClicked.addListener((tab) => {
     console.log("Clicked the browser action");
-    console.log(tab);
     currTab = tab;
     browser.tabs.sendMessage(
       currTab.id,
@@ -10182,13 +10181,26 @@
     if (message.state === "encrypt") {
       let cube = new RubiksCube_default();
       cube.writeTextToCube(message.clientMessage);
-      cube.executeMoves(RubiksCube_default.generateRandomMoves(10));
+      cube.executeMoves("U R U R");
       let cipher = cube.readTextFromCube();
       browser.tabs.sendMessage(
         currTab.id,
         {
           state: "cipher-ready",
           cipher
+        }
+      );
+    }
+    if (message.state === "decrypt") {
+      let cube = new RubiksCube_default();
+      cube.writeTextToCube(message.clientMessage);
+      cube.executeMoves("R' U' R' U'");
+      let plain = cube.readTextFromCube();
+      browser.tabs.sendMessage(
+        currTab.id,
+        {
+          state: "plain-ready",
+          plain
         }
       );
     }

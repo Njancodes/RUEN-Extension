@@ -11,7 +11,6 @@ function onTabs(currentTab) {
 
 browser.action.onClicked.addListener((tab) => {
     console.log("Clicked the browser action");
-    console.log(tab);
     currTab = tab;
     browser.tabs.sendMessage(
         currTab.id,
@@ -26,7 +25,7 @@ browser.runtime.onMessage.addListener((message) => {
         let cube = new Rubiks3Cube();
 
         cube.writeTextToCube(message.clientMessage);
-        cube.executeMoves(Rubiks3Cube.generateRandomMoves(10));
+        cube.executeMoves('U R U R');
 
         let cipher = cube.readTextFromCube();
         browser.tabs.sendMessage(
@@ -34,6 +33,20 @@ browser.runtime.onMessage.addListener((message) => {
             {
                 state: 'cipher-ready',
                 cipher: cipher
+            });
+    }
+    if (message.state === 'decrypt') {
+        let cube = new Rubiks3Cube();
+
+        cube.writeTextToCube(message.clientMessage);
+        cube.executeMoves("R' U' R' U'");
+
+        let plain = cube.readTextFromCube();
+        browser.tabs.sendMessage(
+            currTab.id,
+            {
+                state: 'plain-ready',
+                plain: plain
             });
     }
 })
