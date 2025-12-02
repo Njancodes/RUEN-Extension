@@ -4,11 +4,6 @@ console.log("Background Hello")
 
 let currTab = null
 
-function onTabs(currentTab) {
-    console.log(currentTab)
-}
-
-
 browser.action.onClicked.addListener((tab) => {
     console.log("Clicked the browser action");
     currTab = tab;
