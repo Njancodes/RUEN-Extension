@@ -1,0 +1,131 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #dfe7ff, #faf7ff, #ffe9f3);
+  background-size: 200% 200%;
+  animation: gradientShift 6s ease infinite;
+}
+
+/* Card  */
+.card {
+  width: 380px;
+  padding: 28px;
+  border-radius: 18px;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255,255,255,0.4);
+  box-shadow:
+    0 20px 40px rgba(0,0,0,0.08),
+    inset 0 0 25px rgba(255,255,255,0.4);
+  animation: fadeIn 0.5s ease;
+}
+
+h1 {
+  font-size: 22px;
+  text-align: center;
+  margin-bottom: 16px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  color: #3d3d3d;
+}
+
+/* Input Styling 
+.label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #5c5c5c;
+} */
+
+.input {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  border-radius: 12px;
+  border: 1px solid #cdd2e1;
+  outline: none;
+  transition: 0.25s ease-in-out;
+  background: #ffffffc4;
+}
+
+.input:focus {
+  border-color: #7a8cff;
+  box-shadow: 0 0 8px rgba(122,140,255,0.4);
+}
+
+/*  Buttons */
+.controls {
+  display: flex;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  transition: 0.25s;
+}
+
+.generate{
+  width: 100%;
+}
+
+.btn {
+  background: linear-gradient(135deg, #7b89ff, #9bb8ff);
+  color: white;
+  box-shadow: 0 4px 10px rgba(88,104,255,0.3);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(88,104,255,0.35);
+}
+
+.btn.ghost {
+  background: #f4f4f9;
+  color: #555;
+  border: 1px solid #d6d6e3;
+  box-shadow: none;
+}
+
+.btn.ghost:hover {
+  background: #ececff;
+}
+
+/* Output Box */
+.output-area {
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.65);
+  border: 1px solid rgba(200,200,200,0.4);
+  transition: 0.25s ease;
+}
+
+.output-area:hover {
+  background: rgba(255,255,255,0.9);
+}
+
+.output {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #2f2f2f;
+  font-family: monospace;
+  white-space: pre-wrap;
+}
+
+/* Subtle Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes gradientShift {
+  0%,100% { background-position: left; }
+  50% { background-position: right; }
+}

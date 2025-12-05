@@ -10177,17 +10177,20 @@
       }
     );
   });
-  browser.runtime.onMessage.addListener((message) => {
+  browser.runtime.onMessage.addListener((message, _, sendResponse) => {
     if (message.state === "encrypt") {
+      console.log("BG RECIEVED");
       let cube = new RubiksCube_default();
       cube.writeTextToCube(message.clientMessage);
       cube.executeMoves("U R U R");
       let cipher = cube.readTextFromCube();
+      sendResponse({ cipher });
+    }
+    if (message.command === "decrypt-all-messages") {
       browser.tabs.sendMessage(
         currTab.id,
         {
-          state: "cipher-ready",
-          cipher
+          state: "decrypt-all"
         }
       );
     }

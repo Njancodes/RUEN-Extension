@@ -15,6 +15,9 @@ browser.runtime.onMessage.addListener((message) => {
             clientMessage: cipher
         })
     }
+    if (message.command === 'hello') {
+        console.log("Hello World");
+    }
 })
 
 // Source - https://stackoverflow.com/a/61511955
@@ -85,9 +88,21 @@ waitForElm('button[aria-label="Send"]', (ele) => {
         const messageInput = document.querySelector('div[contenteditable="true"][data-tab="10"]');
         const messageText = messageInput?.textContent || '';
 
+        browser.runtime.sendMessage({
+            state: 'encrypt',
+            clientMessage: messageText
+        }).then((data) => {
+            console.log(data);
+            const inputMessage = document.querySelectorAll('span.xkrh14z')[0].childNodes[0];
+            inputMessage.data = data.cipher;
+            setTimeout(() => {
+                ele.click();
+            }, 0);
+        })
+
         console.log('🚫 Message intercepted!');
         console.log('Message text:', messageText);
-        ele.click();
+
     });
 
     parent.appendChild(overlayButton);

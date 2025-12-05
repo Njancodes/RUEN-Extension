@@ -15,19 +15,22 @@ browser.action.onClicked.addListener((tab) => {
     )
 })
 
-browser.runtime.onMessage.addListener((message) => {
+browser.runtime.onMessage.addListener((message, _, sendResponse) => {
     if (message.state === 'encrypt') {
+        console.log('BG RECIEVED');
         let cube = new Rubiks3Cube();
 
         cube.writeTextToCube(message.clientMessage);
         cube.executeMoves('U R U R');
 
         let cipher = cube.readTextFromCube();
+        sendResponse({cipher});
+    }
+    if(message.command === 'decrypt-all-messages'){
         browser.tabs.sendMessage(
             currTab.id,
             {
-                state: 'cipher-ready',
-                cipher: cipher
+                state: 'decrypt-all',
             });
     }
     if (message.state === 'decrypt') {

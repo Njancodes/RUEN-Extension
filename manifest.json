@@ -32,7 +32,8 @@
     }
   },
   "action": {
-    "default_icon": "icons/extension_icon.svg"
+    "default_icon": "icons/extension_icon.svg",
+    "default_popup": "popup/click_button.html"
   },
   "icons": {
     "32": "icons/extension_icon.svg",
