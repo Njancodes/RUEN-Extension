@@ -15,7 +15,7 @@ browser.action.onClicked.addListener((tab) => {
     )
 })
 
-browser.runtime.onMessage.addListener((message, _, sendResponse) => {
+browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.state === 'encrypt') {
         console.log('BG RECIEVED');
         let cube = new Rubiks3Cube();
@@ -24,13 +24,17 @@ browser.runtime.onMessage.addListener((message, _, sendResponse) => {
         cube.executeMoves('U R U R');
 
         let cipher = cube.readTextFromCube();
-        sendResponse({cipher});
+        sendResponse({ cipher });
     }
-    if(message.command === 'decrypt-all-messages'){
-        browser.tabs.sendMessage(
-            currTab.id,
-            {
-                state: 'decrypt-all',
+    if (message.state === 'decrypt-all-messages') {
+        console.log('BG DAG RECIEVED');
+        browser.tabs.query({ active: true, currentWindow: true })
+            .then(tabs => {
+                if (tabs[0]) {
+                    browser.tabs.sendMessage(tabs[0].id, {
+                        state: 'decrypt-all'
+                    });
+                }
             });
     }
     if (message.state === 'decrypt') {
@@ -40,11 +44,6 @@ browser.runtime.onMessage.addListener((message, _, sendResponse) => {
         cube.executeMoves("R' U' R' U'");
 
         let plain = cube.readTextFromCube();
-        browser.tabs.sendMessage(
-            currTab.id,
-            {
-                state: 'plain-ready',
-                plain: plain
-            });
+        sendResponse({plain});
     }
 })

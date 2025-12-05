@@ -22,7 +22,7 @@ decryptBtn.onclick = () => {
   console.log('decrypt button clicked');
   browser.runtime.sendMessage(
     {
-      command: 'decrypt-all-messages'
+      state: 'decrypt-all-messages'
     }
   )
 }

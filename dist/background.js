@@ -10177,7 +10177,7 @@
       }
     );
   });
-  browser.runtime.onMessage.addListener((message, _, sendResponse) => {
+  browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.state === "encrypt") {
       console.log("BG RECIEVED");
       let cube = new RubiksCube_default();
@@ -10186,26 +10186,22 @@
       let cipher = cube.readTextFromCube();
       sendResponse({ cipher });
     }
-    if (message.command === "decrypt-all-messages") {
-      browser.tabs.sendMessage(
-        currTab.id,
-        {
-          state: "decrypt-all"
+    if (message.state === "decrypt-all-messages") {
+      console.log("BG DAG RECIEVED");
+      browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+        if (tabs[0]) {
+          browser.tabs.sendMessage(tabs[0].id, {
+            state: "decrypt-all"
+          });
         }
-      );
+      });
     }
     if (message.state === "decrypt") {
       let cube = new RubiksCube_default();
       cube.writeTextToCube(message.clientMessage);
       cube.executeMoves("R' U' R' U'");
       let plain = cube.readTextFromCube();
-      browser.tabs.sendMessage(
-        currTab.id,
-        {
-          state: "plain-ready",
-          plain
-        }
-      );
+      sendResponse({ plain });
     }
   });
 })();

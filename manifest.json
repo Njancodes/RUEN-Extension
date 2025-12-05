@@ -33,7 +33,7 @@
   },
   "action": {
     "default_icon": "icons/extension_icon.svg",
-    "default_popup": "popup/click_button.html"
+    "default_popup": "popup/popup.html"
   },
   "icons": {
     "32": "icons/extension_icon.svg",

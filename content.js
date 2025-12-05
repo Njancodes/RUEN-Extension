@@ -15,8 +15,18 @@ browser.runtime.onMessage.addListener((message) => {
             clientMessage: cipher
         })
     }
-    if (message.command === 'hello') {
-        console.log("Hello World");
+    if (message.state === 'decrypt-all') {
+        console.log('CS DA RECIEVED');
+        const chatMessages = document.querySelectorAll('span._ao3e.selectable-text.copyable-text');
+        let cipher = chatMessages[chatMessages.length - 1].textContent;
+        browser.runtime.sendMessage({
+            state: 'decrypt',
+            clientMessage: cipher
+        }).then((data) => {
+            const chatMessages = document.querySelectorAll('span._ao3e.selectable-text.copyable-text');
+            console.log(data.plain);
+            chatMessages[chatMessages.length - 1].textContent = data.plain;
+        })
     }
 })
 
