@@ -7,15 +7,29 @@ const clearBtn = document.getElementById('clearBtn');
 
 runBtn.onclick = () => {
   if (inputEl.value != '') {
-    outputEl.textContent = processInput('Key has been submitted');
+    browser.runtime.sendMessage(
+      {
+        state: 'key',
+        key: inputEl.value
+      }
+    ).then(({ message }) => {
+      console.log(message);
+      outputEl.textContent = processInput('Key has been submitted');
+    })
   } else {
     outputEl.textContent = processInput('');
   }
 };
 
 generateBtn.onclick = () => {
-  outputEl.textContent = processInput('Some Random Key Here');
 
+  browser.runtime.sendMessage(
+    {
+      state: 'gen-key'
+    }
+  ).then((data) => {
+    outputEl.textContent = "The key is : " + processInput(data.key);
+  })
 }
 
 decryptBtn.onclick = () => {

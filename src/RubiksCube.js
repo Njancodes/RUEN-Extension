@@ -123,7 +123,6 @@ class Rubiks3Cube {
                     outputRow += ` \x1b[44m${bottomArray[i][j]}\x1b[0m`;
                 }
             }
-            console.log(outputRow);
         }
     }
 
@@ -472,6 +471,22 @@ class Rubiks3Cube {
                 default: throw new Error(`Unknown move: ${move}`);
             }
         }
+    }
+
+    static generateInverseRandomMoves(key) {
+        const moves = key.match(/[A-Z]'?/g);
+        const inverseMoves = [];
+        moves.forEach((move) => {
+            let inverseMove = "";
+            if (move[move.length - 1] == "'") {
+                inverseMove = move[0];
+
+            } else {
+                inverseMove = move[0] + "'";
+            }
+            inverseMoves.push(inverseMove);
+        });
+        return inverseMoves.reverse().join(' ');
     }
 
     static generateRandomMoves(length) {

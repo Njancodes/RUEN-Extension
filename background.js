@@ -3,6 +3,8 @@ import Rubiks3Cube from "./src/RubiksCube.js";
 console.log("Background Hello")
 
 let currTab = null
+let key = "";
+let inversekey = "";
 
 browser.action.onClicked.addListener((tab) => {
     console.log("Clicked the browser action");
@@ -21,7 +23,8 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         let cube = new Rubiks3Cube();
 
         cube.writeTextToCube(message.clientMessage);
-        cube.executeMoves('U R U R');
+        cube.executeMoves(key);
+        console.log(key);
 
         let cipher = cube.readTextFromCube();
         sendResponse({ cipher });
@@ -37,13 +40,26 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 }
             });
     }
+    if (message.state === 'gen-key') {
+        key = Rubiks3Cube.generateRandomMoves(10);
+        inversekey = Rubiks3Cube.generateInverseRandomMoves(key);
+        sendResponse({ key });
+    }
+    if (message.state == 'key') {
+        key = message.key;
+        console.log(key);
+        inversekey = Rubiks3Cube.generateInverseRandomMoves(message.key);
+        console.log(inversekey);
+        sendResponse({ message:'Received' });
+    }
     if (message.state === 'decrypt') {
         let cube = new Rubiks3Cube();
 
         cube.writeTextToCube(message.clientMessage);
-        cube.executeMoves("R' U' R' U'");
+        console.log(inversekey);
+        cube.executeMoves(inversekey);
 
         let plain = cube.readTextFromCube();
-        sendResponse({plain});
+        sendResponse({ plain });
     }
 })
