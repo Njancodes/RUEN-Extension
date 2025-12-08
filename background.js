@@ -43,6 +43,26 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.state === 'gen-key') {
         key = Rubiks3Cube.generateRandomMoves(10);
         inversekey = Rubiks3Cube.generateInverseRandomMoves(key);
+        browser.tabs.query({ active: true, currentWindow: true })
+            .then(tabs => {
+                if (tabs[0]) {
+                    browser.tabs.sendMessage(tabs[0].id, {
+                        state: 'get-name'
+                    }).then((data) => {
+                        browser.tabs.sendMessage(tabs[0].id, {
+                            state: 'store-key',
+                            keycred: {
+                                name:data.name,
+                                key,
+                                inversekey
+                            }
+                        })
+                    });
+                }
+            });
+        browser.storage.local.get("keycred").then((data)=>{
+            console.log(data);
+        })
         sendResponse({ key });
     }
     if (message.state == 'key') {
@@ -50,7 +70,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         console.log(key);
         inversekey = Rubiks3Cube.generateInverseRandomMoves(message.key);
         console.log(inversekey);
-        sendResponse({ message:'Received' });
+        sendResponse({ message: 'Received' });
     }
     if (message.state === 'decrypt') {
         let cube = new Rubiks3Cube();

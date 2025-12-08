@@ -1,4 +1,4 @@
-browser.runtime.onMessage.addListener((message) => {
+browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.state === 'get-message') {
         const inputMessage = document.querySelectorAll('span.xkrh14z')[0].childNodes[0];
         const chatMessages = document.querySelectorAll('span._ao3e.selectable-text.copyable-text');
@@ -27,6 +27,22 @@ browser.runtime.onMessage.addListener((message) => {
                 console.log(data.plain);
                 chatMessage.textContent = data.plain;
             })
+        })
+    }
+    if(message.state === 'get-name'){
+        console.log('GET NAME EVENT RECIEVED');
+        const nameHeader = document.body.querySelector('div.x1jchvi3 > div:nth-child(1) > div:nth-child(1) > span:nth-child(1)');
+        console.log(nameHeader.textContent);
+        sendResponse({name:nameHeader.textContent});
+    }
+    if(message.state === 'store-key'){
+        console.log("KEY RECIEVED");
+        console.log(message.keycred);
+        browser.storage.local.set({keycred:message.keycred});
+        browser.storage.local.get("keycred").then((data)=>{
+            console.log(data);
+        }).catch((err)=>{
+            console.log(err.message);
         })
     }
 })

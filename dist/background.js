@@ -10215,6 +10215,25 @@
     if (message.state === "gen-key") {
       key = RubiksCube_default.generateRandomMoves(10);
       inversekey = RubiksCube_default.generateInverseRandomMoves(key);
+      browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+        if (tabs[0]) {
+          browser.tabs.sendMessage(tabs[0].id, {
+            state: "get-name"
+          }).then((data) => {
+            browser.tabs.sendMessage(tabs[0].id, {
+              state: "store-key",
+              keycred: {
+                name: data.name,
+                key,
+                inversekey
+              }
+            });
+          });
+        }
+      });
+      browser.storage.local.get("keycred").then((data) => {
+        console.log(data);
+      });
       sendResponse({ key });
     }
     if (message.state == "key") {
