@@ -29,21 +29,48 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
             })
         })
     }
-    if(message.state === 'get-name'){
-        console.log('GET NAME EVENT RECIEVED');
-        const nameHeader = document.body.querySelector('div.x1jchvi3 > div:nth-child(1) > div:nth-child(1) > span:nth-child(1)');
-        console.log(nameHeader.textContent);
-        sendResponse({name:nameHeader.textContent});
+    if (message.state === 'get-num') {
+        console.log('GET NUM EVENT RECIEVED');
+        const elementsWithDataId = document.body.querySelectorAll('[data-id]');
+        let num;
+        if (elementsWithDataId.length > 0) {
+            num = elementsWithDataId[0].getAttribute('data-id').match(/_(\d+)/);
+        }
+        sendResponse({ num: num[1] });
     }
-    if(message.state === 'store-key'){
-        console.log("KEY RECIEVED");
-        console.log(message.keycred);
-        browser.storage.local.set({keycred:message.keycred});
-        browser.storage.local.get("keycred").then((data)=>{
-            console.log(data);
-        }).catch((err)=>{
+    if (message.state === 'get-key') {
+        const elementsWithDataId = document.body.querySelectorAll('[data-id]');
+        let num;
+        if (elementsWithDataId.length > 0) {
+            num = elementsWithDataId[0].getAttribute('data-id').match(/_(\d+)/);
+        }
+
+        console.log(num[1]);
+        browser.storage.local.get(num).then((data) => {
+            console.log("This is the data");
+            console.log(Object.values(data));
+            sendResponse({keys:"Nelson"})
+        }).catch((err) => {
             console.log(err.message);
         })
+    }
+    if (message.state === 'store-key') {
+        console.log("KEY RECIEVED");
+        browser.storage.local.set({
+            [message.keycred.num]: {
+                key: message.keycred.key,
+                inversekey: message.keycred.inversekey
+            },
+        })
+        // browser.storage.local.getKeys().then((data) => {
+        //     console.log(data);
+        // });
+        // browser.storage.local.get(message.keycred.num).then((data) => {
+        //     console.log("This is the data");
+        //     console.log(data);
+        // }).catch((err) => {
+        //     console.log(err.message);
+        // })
     }
 })
 
