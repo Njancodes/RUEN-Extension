@@ -5,6 +5,25 @@ const generateBtn = document.getElementById('generateKey');
 const decryptBtn = document.getElementById('decrypt');
 const clearBtn = document.getElementById('clearBtn');
 
+document.addEventListener('DOMContentLoaded', () => {
+  setInterval(async () => {
+    const numbers = await browser.storage.local.getKeys();
+    for (const number of numbers) {
+      if (document.body.querySelector(`li#num${number}`)) {
+        continue;
+      }
+      const nkList = document.getElementById('number-key-list');
+      const nkLi = document.createElement('li');
+      nkLi.id = "num" + number;
+      const key = (await browser.storage.local.get(number))[number].key;
+      console.log(key);
+      nkLi.innerHTML = `<strong>${number}:</strong> <code>${key}</code>`
+      nkList.appendChild(nkLi);
+    }
+
+  }, 500);
+})
+
 runBtn.onclick = () => {
   if (inputEl.value != '') {
     browser.runtime.sendMessage(
@@ -21,7 +40,7 @@ runBtn.onclick = () => {
   }
 };
 
-generateBtn.onclick =  () => {
+generateBtn.onclick = () => {
 
   browser.runtime.sendMessage(
     {
@@ -29,11 +48,7 @@ generateBtn.onclick =  () => {
     }
   ).then(async (data) => {
     console.log(data);
-    const nkList = document.getElementById('number-key-list');
-    const nkLi = document.createElement('li');
-    nkLi.textContent = `${data.num}:${data.key}`;
-    nkList.appendChild(nkLi);
-    outputEl.textContent = "The key is : " + processInput(data.key) + " For the number: ";
+    outputEl.textContent = "The key is : " + processInput(data.key) + " For the number: " + data.num;
   })
 }
 
