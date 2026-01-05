@@ -21,14 +21,19 @@ runBtn.onclick = () => {
   }
 };
 
-generateBtn.onclick = () => {
+generateBtn.onclick =  () => {
 
   browser.runtime.sendMessage(
     {
       state: 'gen-key'
     }
-  ).then((data) => {
-    outputEl.textContent = "The key is : " + processInput(data.key);
+  ).then(async (data) => {
+    console.log(data);
+    const nkList = document.getElementById('number-key-list');
+    const nkLi = document.createElement('li');
+    nkLi.textContent = `${data.num}:${data.key}`;
+    nkList.appendChild(nkLi);
+    outputEl.textContent = "The key is : " + processInput(data.key) + " For the number: ";
   })
 }
 
