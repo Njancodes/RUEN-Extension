@@ -13,14 +13,72 @@ document.addEventListener('DOMContentLoaded', () => {
         continue;
       }
       const nkList = document.getElementById('number-key-list');
-      const nkLi = document.createElement('li');
-      nkLi.id = "num" + number;
-      const key = (await browser.storage.local.get(number))[number].key;
-      console.log(key);
-      nkLi.innerHTML = `<strong>${number}:</strong> <code>${key}</code>`
-      nkList.appendChild(nkLi);
-    }
 
+      const keyCred = (await browser.storage.local.get(number))[number];
+
+      const key = keyCred.key;
+      console.log(key);
+
+
+      const toggleSwitch = document.createElement("input");
+      toggleSwitch.type = "checkbox";
+      toggleSwitch.className = "toggle-switch";
+      toggleSwitch.addEventListener('change', async function () {
+        const li = this.closest('li');
+
+        const strongTag = li.children[1];
+        const codeTag = li.children[2];
+        const number = strongTag.textContent.trim();
+        const key = codeTag.textContent.trim();
+        if (this.checked) {
+          const tabs = await browser.tabs.query({ active: true, currentWindow: true })
+          if (tabs[0]) {
+            const { isAcc } = await browser.tabs.sendMessage(tabs[0].id, {
+              state: 'check',
+              num: number,
+            });
+
+            if (isAcc) {
+              console.log('Enabled');
+              li.classList.remove("disabled");
+              li.classList.add("enabled");
+              const error = document.body.getElementsByClassName('error')[0];
+              error.textContent = "";
+
+              await browser.tabs.sendMessage(tabs[0].id, {
+                state: 'decrypt-all',
+                key,
+              });
+
+            } else {
+              this.checked = false;
+              const error = document.body.getElementsByClassName('error')[0];
+              error.textContent = "The account you tried to decrypt is not open";
+            }
+          }
+        } else {
+          console.log('Disabled');
+          li.classList.remove("enabled");
+          li.classList.add("disabled");
+        }
+      })
+      const boldNumber = document.createElement("strong");
+      boldNumber.textContent = number;
+      const codeKey = document.createElement("code");
+      codeKey.textContent = key;
+
+
+      const liTag = document.createElement("li");
+      liTag.className = "li-tag";
+      liTag.classList.add("disabled");
+      liTag.id = "num" + number;
+      liTag.appendChild(toggleSwitch);
+      liTag.appendChild(boldNumber);
+      liTag.appendChild(codeKey);
+
+
+      nkList.appendChild(liTag);
+    }
   }, 500);
 })
 

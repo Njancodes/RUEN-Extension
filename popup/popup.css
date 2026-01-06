@@ -14,7 +14,7 @@ body {
 }
 
 #number-key-list * {
-  margin: 5px;
+  margin: 2px;
   border-bottom: 1px solid #e5e7eb;
   font-size: 14px;
   color: #4b5563;
@@ -23,6 +23,11 @@ body {
 
 #number-key-list:last-child {
   border-bottom: none;
+}
+
+.li-tag{
+  display: flex;
+  flex-direction: row;
 }
 
 #number-key-list strong {
@@ -34,8 +39,17 @@ body {
 #number-key-list code {
   font-family: 'Courier New', monospace;
   background: #f3f4f6;
+  padding: 2px 6px;
   border-radius: 4px;
   font-size: 13px;
+}
+
+li.disabled{
+  opacity: 0.5;
+}
+
+.error{
+  color: red;
 }
 
 /* Card  */

@@ -17,12 +17,15 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
     if (message.state === 'decrypt-all') {
         console.log('CS DA RECIEVED');
+        let key = message.key;
         const chatMessages = document.querySelectorAll('span._ao3e.selectable-text.copyable-text');
+        console.log(chatMessages);
         chatMessages.forEach((chatMessage) => {
             let cipher = chatMessage.textContent;
             browser.runtime.sendMessage({
                 state: 'decrypt',
-                clientMessage: cipher
+                clientMessage: cipher,
+                key
             }).then((data) => {
                 console.log(data.plain);
                 chatMessage.textContent = data.plain;
@@ -49,7 +52,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         browser.storage.local.get(num).then((data) => {
             console.log("This is the data");
             console.log(Object.values(data));
-            sendResponse({keys:"Nelson"})
+            sendResponse({ keys: "Nelson" })
         }).catch((err) => {
             console.log(err.message);
         })
@@ -71,6 +74,18 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         // }).catch((err) => {
         //     console.log(err.message);
         // })
+    }
+    if (message.state === "check") {
+        console.log('Checked if the acc');
+        const elementsWithDataId = document.body.querySelectorAll('[data-id]');
+        let isAcc = false;
+        if (elementsWithDataId.length > 0) {
+            let num = elementsWithDataId[0].getAttribute('data-id').match(/_(\d+)/);
+            if (message.num === num[1]) {
+                isAcc = true
+            }
+        }
+        sendResponse({ isAcc });
     }
 })
 
@@ -134,17 +149,24 @@ waitForElm('button[aria-label="Send"]', (ele) => {
         parent.style.position = 'relative';
     }
 
-    overlayButton.addEventListener('click', (e) => {
+    overlayButton.addEventListener('click', async (e) => {
         e.preventDefault();
         e.stopPropagation();
 
         // Get the message text from WhatsApp's input
         const messageInput = document.querySelector('div[contenteditable="true"][data-tab="10"]');
         const messageText = messageInput?.textContent || '';
-
+        const elementsWithDataId = document.body.querySelectorAll('[data-id]');
+        let num;
+        if (elementsWithDataId.length > 0) {
+            num = elementsWithDataId[0].getAttribute('data-id').match(/_(\d+)/);
+        }
+        const keyData = await browser.storage.local.get(num);
+        const key = Object.values(keyData)[0].key;
         browser.runtime.sendMessage({
             state: 'encrypt',
-            clientMessage: messageText
+            clientMessage: messageText,
+            key
         }).then((data) => {
             console.log(data);
             const inputMessage = document.querySelectorAll('span.xkrh14z')[0].childNodes[0];
