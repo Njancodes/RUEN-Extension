@@ -21,29 +21,12 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.state === 'encrypt') {
         console.log('BG RECIEVED');
         let cube = new Rubiks3Cube();
-        browser.tabs.query({ active: true, currentWindow: true })
-            .then(tabs => {
-                if (tabs[0]) {
-                    browser.tabs.sendMessage(tabs[0].id, {
-                        state: 'get-num'
-                    }).then((data) => {
-                        console.log("This is the encryption part");
-                        console.log(data.num);
-                        browser.storage.local.get(data.num).then((keys) => {
-                            console.log(keys[data.num]);
-                            cube.writeTextToCube(message.clientMessage);
-                            cube.executeMoves(keys[data.num].key);
+        cube.writeTextToCube(message.clientMessage);
+        cube.executeMoves(message.key);
 
-                            let cipher = cube.readTextFromCube();
-                            console.log(cipher);
-                            sendResponse({ cipher });
-                        })
-                    }).catch((err) => {
-                        console.error(err);
-                    });
-                }
-            });
-        return true;
+        let cipher = cube.readTextFromCube();
+        console.log(cipher);
+        sendResponse({ cipher });
     }
     if (message.state === 'decrypt-all-messages') {
         console.log('BG DAG RECIEVED');
@@ -97,25 +80,13 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         browser.tabs.query({ active: true, currentWindow: true })
             .then(tabs => {
                 if (tabs[0]) {
-                    browser.tabs.sendMessage(tabs[0].id, {
-                        state: 'get-num'
-                    }).then((data) => {
-                        console.log("This is the decryption part");
-                        console.log(data.num);
-                        browser.storage.local.get(data.num).then((keys) => {
-                            console.log(keys[data.num]);
-                            cube.writeTextToCube(message.clientMessage);
-                            cube.executeMoves(keys[data.num].inversekey);
+                    cube.writeTextToCube(message.clientMessage);
+                    cube.executeMoves(message.key);
 
-                            let plain = cube.readTextFromCube();
-                            console.log(plain);
-                            sendResponse({ plain });
-                        })
-                    }).catch((err) => {
-                        console.error(err);
-                    });
+                    let plain = cube.readTextFromCube();
+                    console.log(plain);
+                    sendResponse({ plain });
                 }
             });
-        return true;
     }
 })
