@@ -29,7 +29,6 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 clientMessage: cipher,
                 inversekey
             }).then((data) => {
-                console.log(data.plain);
                 chatMessage.textContent = data.plain;
             })
         }

@@ -10243,7 +10243,28 @@
       console.log(key);
       inversekey = RubiksCube_default.generateInverseRandomMoves(message.key);
       console.log(inversekey);
-      sendResponse({ message: "Received" });
+      browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+        if (tabs[0]) {
+          browser.tabs.sendMessage(tabs[0].id, {
+            state: "get-num"
+          }).then(async (data) => {
+            const num = data.num;
+            browser.tabs.sendMessage(tabs[0].id, {
+              state: "store-key",
+              keycred: {
+                num: data.num,
+                key,
+                inversekey
+              }
+            });
+            sendResponse({ key, num });
+          });
+        }
+      }).catch((err) => {
+        console.error("Error: ", err);
+        sendResponse({ error: "Failed to get num" });
+      });
+      return true;
     }
     if (message.state === "decrypt") {
       let cube = new RubiksCube_default();
@@ -10252,7 +10273,6 @@
           cube.writeTextToCube(message.clientMessage);
           cube.executeMoves(message.inversekey);
           let plain = cube.readTextFromCube();
-          console.log(plain);
           sendResponse({ plain });
         }
       });
