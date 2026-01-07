@@ -1,3 +1,5 @@
+const processedMessages = new WeakSet();
+
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.state === 'get-message') {
         const inputMessage = document.querySelectorAll('span.xkrh14z')[0].childNodes[0];
@@ -17,20 +19,20 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
     if (message.state === 'decrypt-all') {
         console.log('CS DA RECIEVED');
-        let key = message.key;
-        const chatMessages = document.querySelectorAll('span._ao3e.selectable-text.copyable-text');
+        let inversekey = message.inversekey;
+        const chatMessages = document.querySelectorAll('#main [data-scrolltracepolicy="wa.web.conversation.messages"] [data-testid="selectable-text"]');
         console.log(chatMessages);
-        chatMessages.forEach((chatMessage) => {
+        for (const chatMessage of chatMessages) {
             let cipher = chatMessage.textContent;
             browser.runtime.sendMessage({
                 state: 'decrypt',
                 clientMessage: cipher,
-                key
+                inversekey
             }).then((data) => {
                 console.log(data.plain);
                 chatMessage.textContent = data.plain;
             })
-        })
+        }
     }
     if (message.state === 'get-num') {
         console.log('GET NUM EVENT RECIEVED');
@@ -163,6 +165,7 @@ waitForElm('button[aria-label="Send"]', (ele) => {
         }
         const keyData = await browser.storage.local.get(num);
         const key = Object.values(keyData)[0].key;
+        console.log(key);
         browser.runtime.sendMessage({
             state: 'encrypt',
             clientMessage: messageText,

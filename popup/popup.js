@@ -29,7 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const strongTag = li.children[1];
         const codeTag = li.children[2];
         const number = strongTag.textContent.trim();
-        const key = codeTag.textContent.trim();
+        const data = await browser.storage.local.get(number);
+        console.log(data[number]);
+        const inversekey = data[number].inversekey;
         if (this.checked) {
           const tabs = await browser.tabs.query({ active: true, currentWindow: true })
           if (tabs[0]) {
@@ -47,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
               await browser.tabs.sendMessage(tabs[0].id, {
                 state: 'decrypt-all',
-                key,
+                inversekey,
               });
 
             } else {

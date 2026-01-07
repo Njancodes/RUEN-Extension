@@ -81,12 +81,13 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
             .then(tabs => {
                 if (tabs[0]) {
                     cube.writeTextToCube(message.clientMessage);
-                    cube.executeMoves(message.key);
+                    cube.executeMoves(message.inversekey);
 
                     let plain = cube.readTextFromCube();
                     console.log(plain);
                     sendResponse({ plain });
                 }
             });
+        return true;
     }
 })
