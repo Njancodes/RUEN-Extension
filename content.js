@@ -78,6 +78,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
     if (message.state === "check") {
         console.log('Checked if the acc');
+
         const elementsWithDataId = document.body.querySelectorAll('[data-id]');
         let isAcc = false;
         if (elementsWithDataId.length > 0) {
@@ -86,7 +87,59 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 isAcc = true
             }
         }
-        sendResponse({ isAcc });
+
+        if (isAcc) {
+            // Wrap the observer setup in an async function
+            (async () => {
+                const elementsWithDataId = document.body.querySelectorAll('[data-id]');
+                const num = elementsWithDataId[0].getAttribute('data-id').match(/_(\d+)/);
+                const keyCred = await browser.storage.local.get(num[1]);
+                let inversekey = keyCred[num[1]].inversekey;
+                const chatMessages = document.querySelectorAll('#main [data-scrolltracepolicy="wa.web.conversation.messages"] [data-testid="selectable-text"]');
+
+                for (const chatMessage of chatMessages) {
+                    let cipher = chatMessage.textContent;
+                    browser.runtime.sendMessage({
+                        state: 'decrypt',
+                        clientMessage: cipher,
+                        inversekey
+                    }).then((data) => {
+                        chatMessage.textContent = data.plain;
+                    });
+                }
+                console.log('The observer is set up');
+                const observer = new MutationObserver(async () => {
+                    console.log('New message has appeared');
+                    const elementsWithDataId = document.body.querySelectorAll('[data-id]');
+                    const num = elementsWithDataId[0].getAttribute('data-id').match(/_(\d+)/);
+                    const keyCred = await browser.storage.local.get(num[1]);
+                    let inversekey = keyCred[num[1]].inversekey;
+                    const chatMessages = document.querySelectorAll('#main [data-scrolltracepolicy="wa.web.conversation.messages"] [data-testid="selectable-text"]');
+
+                    for (const chatMessage of chatMessages) {
+                        let cipher = chatMessage.textContent;
+                        browser.runtime.sendMessage({
+                            state: 'decrypt',
+                            clientMessage: cipher,
+                            inversekey
+                        }).then((data) => {
+                            chatMessage.textContent = data.plain;
+                        });
+                    }
+                });
+
+                observer.observe(document.body.querySelector('[data-tab="8"]'), {
+                    childList: true
+                });
+
+                // Send response after observer is set up
+                sendResponse({ isAcc });
+            })();
+            return true; // Keep the message channel open for async sendResponse
+        } else {
+            sendResponse({ isAcc });
+        }
+
     }
 })
 
@@ -127,8 +180,6 @@ function waitForElm(selector, callback) {
 }
 
 waitForElm('button[aria-label="Send"]', (ele) => {
-    console.log("Got the button ");
-    console.log(ele);
     const parent = ele.parentElement;
 
     let overlayButton = document.createElement('button');
@@ -164,13 +215,11 @@ waitForElm('button[aria-label="Send"]', (ele) => {
         }
         const keyData = await browser.storage.local.get(num);
         const key = Object.values(keyData)[0].key;
-        console.log(key);
         browser.runtime.sendMessage({
             state: 'encrypt',
             clientMessage: messageText,
             key
         }).then((data) => {
-            console.log(data);
             const inputMessage = document.querySelectorAll('span.xkrh14z')[0].childNodes[0];
             inputMessage.data = data.cipher;
             setTimeout(() => {
@@ -178,17 +227,12 @@ waitForElm('button[aria-label="Send"]', (ele) => {
             }, 0);
         })
 
-        console.log('🚫 Message intercepted!');
-        console.log('Message text:', messageText);
-
     });
 
     parent.appendChild(overlayButton);
-
-    console.log('✅ Overlay button created in parent element!');
-
-
 });
+
+
 
 browser.runtime.onMessage.addListener((message) => {
     console.log(message)

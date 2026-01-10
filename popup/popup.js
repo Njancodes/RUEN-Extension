@@ -33,28 +33,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (this.checked) {
           const tabs = await browser.tabs.query({ active: true, currentWindow: true })
           if (tabs[0]) {
-            const { isAcc } = await browser.tabs.sendMessage(tabs[0].id, {
+            browser.tabs.sendMessage(tabs[0].id, {
               state: 'check',
               num: number,
-            });
-
-            if (isAcc) {
-              console.log('Enabled');
-              li.classList.remove("disabled");
-              li.classList.add("enabled");
-              const error = document.body.getElementsByClassName('error')[0];
-              error.textContent = "";
-
-              await browser.tabs.sendMessage(tabs[0].id, {
-                state: 'decrypt-all',
-                inversekey,
-              });
-
-            } else {
-              this.checked = false;
-              const error = document.body.getElementsByClassName('error')[0];
-              error.textContent = "The account you tried to decrypt is not open";
-            }
+            }).then(async ({isAcc}) => {
+              console.log('The value of isAcc is: ', isAcc);
+              if (isAcc) {
+                console.log('Enabled');
+                li.classList.remove("disabled");
+                li.classList.add("enabled");
+                const error = document.body.getElementsByClassName('error')[0];
+                error.textContent = "";
+              } else {
+                this.checked = false;
+                const error = document.body.getElementsByClassName('error')[0];
+                error.textContent = "The account you tried to decrypt is not open";
+              }
+            })
           }
         } else {
           console.log('Disabled');
