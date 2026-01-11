@@ -21,7 +21,6 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         console.log('CS DA RECIEVED');
         let inversekey = message.inversekey;
         const chatMessages = document.querySelectorAll('#main [data-scrolltracepolicy="wa.web.conversation.messages"] [data-testid="selectable-text"]');
-        console.log(chatMessages);
         for (const chatMessage of chatMessages) {
             let cipher = chatMessage.textContent;
             browser.runtime.sendMessage({
@@ -91,6 +90,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (isAcc) {
             // Wrap the observer setup in an async function
             (async () => {
+
                 const elementsWithDataId = document.body.querySelectorAll('[data-id]');
                 const num = elementsWithDataId[0].getAttribute('data-id').match(/_(\d+)/);
                 const keyCred = await browser.storage.local.get(num[1]);
@@ -98,7 +98,11 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 const chatMessages = document.querySelectorAll('#main [data-scrolltracepolicy="wa.web.conversation.messages"] [data-testid="selectable-text"]');
 
                 for (const chatMessage of chatMessages) {
-                    let cipher = chatMessage.textContent;
+                    let isEncrypted = chatMessage.textContent.match(/^ENC:/)?.[0] === "ENC:";
+                    if (!isEncrypted) {
+                        continue;
+                    }
+                    let cipher = chatMessage.textContent.split(/^ENC:/)[1];
                     browser.runtime.sendMessage({
                         state: 'decrypt',
                         clientMessage: cipher,
@@ -202,13 +206,18 @@ waitForElm('button[aria-label="Send"]', (ele) => {
             }, 0);
         })
 
-        setTimeout(async() => {
+        setTimeout(async () => {
             const keyCred = await browser.storage.local.get(num[1]);
             let inversekey = keyCred[num[1]].inversekey;
             const chatMessages = document.querySelectorAll('#main [data-scrolltracepolicy="wa.web.conversation.messages"] [data-testid="selectable-text"]');
 
             for (const chatMessage of chatMessages) {
-                const cipher = chatMessage.textContent;
+                let isEncrypted = chatMessage.textContent.match(/^ENC:/)?.[0] === "ENC:";
+                if (!isEncrypted) {
+                    continue;
+                }
+
+                const cipher = chatMessage.textContent.split(/^ENC:/)[1];
                 browser.runtime.sendMessage({
                     state: 'decrypt',
                     clientMessage: cipher,

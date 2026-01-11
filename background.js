@@ -24,7 +24,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         cube.writeTextToCube(message.clientMessage);
         cube.executeMoves(message.key);
 
-        let cipher = cube.readTextFromCube();
+        let cipher = "ENC:" + cube.readTextFromCube();
         console.log(cipher);
         sendResponse({ cipher });
     }
