@@ -107,32 +107,6 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
                         chatMessage.textContent = data.plain;
                     });
                 }
-                console.log('The observer is set up');
-                const observer = new MutationObserver(async () => {
-                    console.log('New message has appeared');
-                    const elementsWithDataId = document.body.querySelectorAll('[data-id]');
-                    const num = elementsWithDataId[0].getAttribute('data-id').match(/_(\d+)/);
-                    const keyCred = await browser.storage.local.get(num[1]);
-                    let inversekey = keyCred[num[1]].inversekey;
-                    const chatMessages = document.querySelectorAll('#main [data-scrolltracepolicy="wa.web.conversation.messages"] [data-testid="selectable-text"]');
-
-                    for (const chatMessage of chatMessages) {
-                        let cipher = chatMessage.textContent;
-                        browser.runtime.sendMessage({
-                            state: 'decrypt',
-                            clientMessage: cipher,
-                            inversekey
-                        }).then((data) => {
-                            chatMessage.textContent = data.plain;
-                        });
-                    }
-                });
-
-                observer.observe(document.body.querySelector('[data-tab="8"]'), {
-                    childList: true
-                });
-
-                // Send response after observer is set up
                 sendResponse({ isAcc });
             })();
             return true; // Keep the message channel open for async sendResponse
@@ -166,7 +140,7 @@ function waitForElm(selector, callback) {
 
         // Only fire when it goes from NOT existing -> existing
         if (exists && !lastSeen) {
-            callback(element);
+            callback(element, mutations);
         }
 
         lastSeen = exists; // ← YOU FORGOT THIS!
@@ -205,6 +179,7 @@ waitForElm('button[aria-label="Send"]', (ele) => {
         e.preventDefault();
         e.stopPropagation();
 
+
         // Get the message text from WhatsApp's input
         const messageInput = document.querySelector('div[contenteditable="true"][data-tab="10"]');
         const messageText = messageInput?.textContent || '';
@@ -222,15 +197,32 @@ waitForElm('button[aria-label="Send"]', (ele) => {
         }).then((data) => {
             const inputMessage = document.querySelectorAll('span.xkrh14z')[0].childNodes[0];
             inputMessage.data = data.cipher;
-            setTimeout(() => {
+            setTimeout(async () => {
                 ele.click();
             }, 0);
         })
 
+        setTimeout(async() => {
+            const keyCred = await browser.storage.local.get(num[1]);
+            let inversekey = keyCred[num[1]].inversekey;
+            const chatMessages = document.querySelectorAll('#main [data-scrolltracepolicy="wa.web.conversation.messages"] [data-testid="selectable-text"]');
+
+            for (const chatMessage of chatMessages) {
+                const cipher = chatMessage.textContent;
+                browser.runtime.sendMessage({
+                    state: 'decrypt',
+                    clientMessage: cipher,
+                    inversekey
+                }).then((data) => {
+                    chatMessage.textContent = data.plain;
+                })
+            }
+        }, 1000)
     });
 
     parent.appendChild(overlayButton);
 });
+
 
 
 
