@@ -4,7 +4,10 @@
   "description": "",
   "main": "rotatingcubes.js",
   "scripts": {
-    "test": "jest",
+    "test:unit": "jest --verbose",
+    "test:security":"web-ext lint",
+    "performance":"firefox https://share.firefox.dev/3Z78wRH",
+    "test":"npm run test:unit && npm run test:security && npm run performance",
     "build": "node build.js",
     "dev": "node build.js --watch"
   },
