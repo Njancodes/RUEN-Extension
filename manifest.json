@@ -3,6 +3,16 @@
   "name": "RUEN Extension",
   "version": "1.0.0",
   "description": "Encrypt your whatsapp messsages before sending it.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "@RUEN-nexus",
+      "data_collection_permissions": {
+        "required":[
+          "websiteContent","websiteActivity"
+        ]
+      }
+    }
+  },
   "content_scripts": [
     {
       "matches": [
