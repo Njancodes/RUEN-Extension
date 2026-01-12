@@ -8,8 +8,7 @@
     "test:security": "web-ext lint",
     "performance": "firefox https://share.firefox.dev/3Z78wRH",
     "test": "npm run test:unit && npm run test:security && npm run performance",
-    "build": "node dev-tools/build.js",
-    "zip":"node dev-tools/zip.js"
+    "build": "node dev-tools/build.js && web-ext build"
   },
   "repository": {
     "type": "git",

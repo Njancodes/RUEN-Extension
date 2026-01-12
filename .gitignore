@@ -1,4 +1,4 @@
 node_modules
 popupui.png
 dist
-*.zip
+web-ext-artifacts
