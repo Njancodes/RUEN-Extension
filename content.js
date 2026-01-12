@@ -1,5 +1,46 @@
 const processedMessages = new WeakSet();
 
+async function sendRuntimeMessage(message) {
+    try {
+        return await browser.runtime.sendMessage(message);
+    } catch (err) {
+        console.error('Runtime message error:', err);
+        throw err;
+    }
+}
+
+function isEncryptedMessage(chatMessage) {
+    return chatMessage.textContent.startsWith('ENC:');
+}
+
+async function decryptMessage(chatMessage, inversekey) {
+    try {
+        const cipher = chatMessage.textContent.slice(4); // Remove 'ENC:' prefix
+
+        const data = await sendRuntimeMessage({
+            state: 'decrypt',
+            clientMessage: cipher,
+            inversekey
+        });
+
+        chatMessage.textContent = data.plain;
+    } catch (err) {
+        console.error('Failed to decrypt message:', err);
+    }
+}
+
+async function decryptChatMessages(inversekey) {
+    const chatMessages = document.querySelectorAll(
+        '#main [data-scrolltracepolicy="wa.web.conversation.messages"] [data-testid="selectable-text"]'
+    );
+
+    const decryptPromises = Array.from(chatMessages)
+        .filter(isEncryptedMessage)
+        .map(chatMessage => decryptMessage(chatMessage, inversekey));
+
+    await Promise.all(decryptPromises);
+}
+
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.state === 'get-num') {
         console.log('GET NUM EVENT RECIEVED');
@@ -34,16 +75,9 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 inversekey: message.keycred.inversekey
             },
         })
-        // browser.storage.local.getKeys().then((data) => {
-        //     console.log(data);
-        // });
-        // browser.storage.local.get(message.keycred.num).then((data) => {
-        //     console.log("This is the data");
-        //     console.log(data);
-        // }).catch((err) => {
-        //     console.log(err.message);
-        // })
     }
+    //Check is misleading
+    //It checks and also decrypts the chat messages
     if (message.state === "check") {
         console.log('Checked if the acc');
 
@@ -59,27 +93,8 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (isAcc) {
             // Wrap the observer setup in an async function
             (async () => {
-
-                const elementsWithDataId = document.body.querySelectorAll('[data-id]');
-                const num = elementsWithDataId[0].getAttribute('data-id').match(/_(\d+)/);
-                const keyCred = await browser.storage.local.get(num[1]);
-                let inversekey = keyCred[num[1]].inversekey;
-                const chatMessages = document.querySelectorAll('#main [data-scrolltracepolicy="wa.web.conversation.messages"] [data-testid="selectable-text"]');
-
-                for (const chatMessage of chatMessages) {
-                    let isEncrypted = chatMessage.textContent.match(/^ENC:/)?.[0] === "ENC:";
-                    if (!isEncrypted) {
-                        continue;
-                    }
-                    let cipher = chatMessage.textContent.split(/^ENC:/)[1];
-                    browser.runtime.sendMessage({
-                        state: 'decrypt',
-                        clientMessage: cipher,
-                        inversekey
-                    }).then((data) => {
-                        chatMessage.textContent = data.plain;
-                    });
-                }
+                let inversekey = message.inversekey;
+                await decryptChatMessages(inversekey);
                 sendResponse({ isAcc });
             })();
             return true; // Keep the message channel open for async sendResponse
@@ -178,43 +193,9 @@ waitForElm('button[aria-label="Send"]', (ele) => {
         setTimeout(async () => {
             const keyCred = await browser.storage.local.get(num[1]);
             let inversekey = keyCred[num[1]].inversekey;
-            const chatMessages = document.querySelectorAll('#main [data-scrolltracepolicy="wa.web.conversation.messages"] [data-testid="selectable-text"]');
-
-            for (const chatMessage of chatMessages) {
-                let isEncrypted = chatMessage.textContent.match(/^ENC:/)?.[0] === "ENC:";
-                if (!isEncrypted) {
-                    continue;
-                }
-
-                const cipher = chatMessage.textContent.split(/^ENC:/)[1];
-                browser.runtime.sendMessage({
-                    state: 'decrypt',
-                    clientMessage: cipher,
-                    inversekey
-                }).then((data) => {
-                    chatMessage.textContent = data.plain;
-                })
-            }
+            await decryptChatMessages(inversekey);
         }, 1000)
     });
 
     parent.appendChild(overlayButton);
 });
-
-
-
-
-browser.runtime.onMessage.addListener((message) => {
-    console.log(message)
-    if (message.state === 'cipher-ready') {
-        const inputMessage = document.querySelectorAll('span.xkrh14z')[0].childNodes[0];
-        // let cipher = btoa(plain);
-        inputMessage.data = message.cipher;
-    }
-    if (message.state === 'plain-ready') {
-        const chatMessages = document.querySelectorAll('span._ao3e.selectable-text.copyable-text');
-        console.log(message.plain);
-        chatMessages[chatMessages.length - 1].textContent = message.plain;
-
-    }
-})

@@ -10191,7 +10191,7 @@
       throw err;
     }
   }
-  browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+  browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.state === "encrypt") {
       console.log("BG RECIEVED");
       let cube = new RubiksCube_default();
@@ -10200,62 +10200,6 @@
       let cipher = "ENC:" + cube.readTextFromCube();
       console.log(cipher);
       sendResponse({ cipher });
-    }
-    if (message.state === "decrypt-all-messages") {
-      console.log("BG DAG RECIEVED");
-      browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-        if (tabs[0]) {
-          browser.tabs.sendMessage(tabs[0].id, {
-            state: "decrypt-all"
-          });
-        }
-      });
-    }
-    if (message.state === "gen-key") {
-      const key = RubiksCube_default.generateRandomMoves(10);
-      const inversekey = RubiksCube_default.generateInverseRandomMoves(key);
-      browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-        if (tabs[0]) {
-          browser.tabs.sendMessage(tabs[0].id, {
-            state: "get-num"
-          }).then(async (data) => {
-            const num = data.num;
-            browser.tabs.sendMessage(tabs[0].id, {
-              state: "store-key",
-              keycred: {
-                num: data.num,
-                key,
-                inversekey
-              }
-            });
-            sendResponse({ key, num });
-          });
-        }
-      }).catch((err) => {
-        console.error("Error: ", err);
-        sendResponse({ error: "Failed to get num" });
-      });
-      return true;
-    }
-    if (message.state == "key") {
-      const key = message.key;
-      const inversekey = RubiksCube_default.generateInverseRandomMoves(message.key);
-      try {
-        const data = await sendMessageToActiveTab({ state: "get-num" });
-        const num = data.num;
-        await sendMessageToActiveTab({
-          state: "store-key",
-          keycred: {
-            num: data.num,
-            key,
-            inversekey
-          }
-        });
-        sendResponse({ key, num });
-      } catch (error) {
-        sendResponse({ error: "Failed to get num" });
-      }
-      return true;
     }
     if (message.state === "decrypt") {
       let cube = new RubiksCube_default();
@@ -10267,6 +10211,50 @@
           sendResponse({ plain });
         }
       });
+      return true;
+    }
+    if (message.state === "gen-key") {
+      const key = RubiksCube_default.generateRandomMoves(10);
+      const inversekey = RubiksCube_default.generateInverseRandomMoves(key);
+      try {
+        (async () => {
+          const data = await sendMessageToActiveTab({ state: "get-num" });
+          const num = data.num;
+          await sendMessageToActiveTab({
+            state: "store-key",
+            keycred: {
+              num: data.num,
+              key,
+              inversekey
+            }
+          });
+          sendResponse({ key, num });
+        })();
+      } catch (error) {
+        sendResponse({ error: "Failed to get num" });
+      }
+      return true;
+    }
+    if (message.state == "submit-key") {
+      const key = message.key;
+      const inversekey = RubiksCube_default.generateInverseRandomMoves(message.key);
+      try {
+        (async () => {
+          const data = await sendMessageToActiveTab({ state: "get-num" });
+          const num = data.num;
+          await sendMessageToActiveTab({
+            state: "store-key",
+            keycred: {
+              num: data.num,
+              key,
+              inversekey
+            }
+          });
+          sendResponse({ key, num });
+        })();
+      } catch (error) {
+        sendResponse({ error: "Failed to get num" });
+      }
       return true;
     }
   });

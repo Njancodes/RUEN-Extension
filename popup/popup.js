@@ -17,8 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const keyCred = (await browser.storage.local.get(number))[number];
 
       const key = keyCred.key;
-      console.log(key);
-
 
       const toggleSwitch = document.createElement("input");
       toggleSwitch.type = "checkbox";
@@ -36,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
             browser.tabs.sendMessage(tabs[0].id, {
               state: 'check',
               num: number,
+              inversekey
             }).then(async ({isAcc}) => {
               console.log('The value of isAcc is: ', isAcc);
               if (isAcc) {

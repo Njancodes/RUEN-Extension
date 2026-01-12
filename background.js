@@ -17,7 +17,7 @@ async function sendMessageToActiveTab(message) {
     }
 }
 
-browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.state === 'encrypt') {
         console.log('BG RECIEVED');
         let cube = new Rubiks3Cube();
@@ -46,19 +46,21 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         const key = Rubiks3Cube.generateRandomMoves(10);
         const inversekey = Rubiks3Cube.generateInverseRandomMoves(key);
         try {
-            const data = await sendMessageToActiveTab({ state: 'get-num' });
-            const num = data.num;
+            (async () => {
+                const data = await sendMessageToActiveTab({ state: 'get-num' });
+                const num = data.num;
 
-            await sendMessageToActiveTab({
-                state: 'store-key',
-                keycred: {
-                    num: data.num,
-                    key,
-                    inversekey
-                }
-            })
+                await sendMessageToActiveTab({
+                    state: 'store-key',
+                    keycred: {
+                        num: data.num,
+                        key,
+                        inversekey
+                    }
+                })
 
-            sendResponse({ key, num });
+                sendResponse({ key, num });
+            })()
         } catch (error) {
             sendResponse({ error: 'Failed to get num' });
         }
@@ -68,19 +70,21 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         const key = message.key;
         const inversekey = Rubiks3Cube.generateInverseRandomMoves(message.key);
         try {
-            const data = await sendMessageToActiveTab({ state: 'get-num' });
-            const num = data.num;
+            (async () => {
+                const data = await sendMessageToActiveTab({ state: 'get-num' });
+                const num = data.num;
 
-            await sendMessageToActiveTab({
-                state: 'store-key',
-                keycred: {
-                    num: data.num,
-                    key,
-                    inversekey
-                }
-            })
+                await sendMessageToActiveTab({
+                    state: 'store-key',
+                    keycred: {
+                        num: data.num,
+                        key,
+                        inversekey
+                    }
+                })
 
-            sendResponse({ key, num });
+                sendResponse({ key, num });
+            })()
         } catch (error) {
             sendResponse({ error: 'Failed to get num' });
         }
