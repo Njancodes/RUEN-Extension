@@ -5,11 +5,11 @@
   "main": "rotatingcubes.js",
   "scripts": {
     "test:unit": "jest --verbose",
-    "test:security":"web-ext lint",
-    "performance":"firefox https://share.firefox.dev/3Z78wRH",
-    "test":"npm run test:unit && npm run test:security && npm run performance",
-    "build": "node build.js",
-    "dev": "node build.js --watch"
+    "test:security": "web-ext lint",
+    "performance": "firefox https://share.firefox.dev/3Z78wRH",
+    "test": "npm run test:unit && npm run test:security && npm run performance",
+    "build": "node dev-tools/build.js",
+    "zip":"node dev-tools/zip.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/Njancodes/RUEN-Extension#readme",
   "dependencies": {
+    "archiver": "^7.0.1",
     "mathjs": "^15.0.0"
   },
   "devDependencies": {
