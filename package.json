@@ -4,8 +4,9 @@
   "description": "",
   "main": "rotatingcubes.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "esbuild background.js --bundle --outfile=dist/background.js --format=iife"
+    "test": "jest",
+    "build": "node build.js",
+    "dev": "node build.js --watch"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,13 @@
     "mathjs": "^15.0.0"
   },
   "devDependencies": {
-    "esbuild": "^0.25.12"
+    "@babel/core": "^7.28.5",
+    "@babel/preset-env": "^7.28.5",
+    "@testing-library/dom": "^10.4.1",
+    "@types/jest": "^30.0.0",
+    "babel-jest": "^30.2.0",
+    "esbuild": "^0.25.12",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0"
   }
 }
