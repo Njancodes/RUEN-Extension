@@ -23,7 +23,6 @@
   },
   "homepage": "https://github.com/Njancodes/RUEN-Extension#readme",
   "dependencies": {
-    "archiver": "^7.0.1",
     "mathjs": "^15.0.0"
   },
   "devDependencies": {
