@@ -1,3 +1,6 @@
 node_modules
 popupui.png
-
+dist
+babel.config.json
+jest.*
+*.test.js
