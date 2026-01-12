@@ -81,7 +81,7 @@ runBtn.onclick = () => {
   if (inputEl.value != '') {
     browser.runtime.sendMessage(
       {
-        state: 'key',
+        state: 'submit-key',
         key: inputEl.value
       }
     ).then(({ message }) => {
@@ -103,15 +103,6 @@ generateBtn.onclick = () => {
     console.log(data);
     outputEl.textContent = "The key is : " + processInput(data.key) + " For the number: " + data.num;
   })
-}
-
-decryptBtn.onclick = () => {
-  console.log('decrypt button clicked');
-  browser.runtime.sendMessage(
-    {
-      state: 'decrypt-all-messages'
-    }
-  )
 }
 
 clearBtn.onclick = () => {

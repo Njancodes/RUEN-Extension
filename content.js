@@ -1,37 +1,6 @@
 const processedMessages = new WeakSet();
 
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.state === 'get-message') {
-        const inputMessage = document.querySelectorAll('span.xkrh14z')[0].childNodes[0];
-        const chatMessages = document.querySelectorAll('span._ao3e.selectable-text.copyable-text');
-
-        let plain = inputMessage.textContent;
-        //Assume the text is encrypted
-        let cipher = chatMessages[chatMessages.length - 1].textContent;
-        browser.runtime.sendMessage({
-            state: 'encrypt',
-            clientMessage: plain
-        })
-        browser.runtime.sendMessage({
-            state: 'decrypt',
-            clientMessage: cipher
-        })
-    }
-    if (message.state === 'decrypt-all') {
-        console.log('CS DA RECIEVED');
-        let inversekey = message.inversekey;
-        const chatMessages = document.querySelectorAll('#main [data-scrolltracepolicy="wa.web.conversation.messages"] [data-testid="selectable-text"]');
-        for (const chatMessage of chatMessages) {
-            let cipher = chatMessage.textContent;
-            browser.runtime.sendMessage({
-                state: 'decrypt',
-                clientMessage: cipher,
-                inversekey
-            }).then((data) => {
-                chatMessage.textContent = data.plain;
-            })
-        }
-    }
     if (message.state === 'get-num') {
         console.log('GET NUM EVENT RECIEVED');
         const elementsWithDataId = document.body.querySelectorAll('[data-id]');
