@@ -17,8 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const keyCred = (await browser.storage.local.get(number))[number];
 
       const key = keyCred.key;
-      console.log(key);
-
 
       const toggleSwitch = document.createElement("input");
       toggleSwitch.type = "checkbox";
@@ -36,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
             browser.tabs.sendMessage(tabs[0].id, {
               state: 'check',
               num: number,
+              inversekey
             }).then(async ({isAcc}) => {
               console.log('The value of isAcc is: ', isAcc);
               if (isAcc) {
@@ -81,7 +80,7 @@ runBtn.onclick = () => {
   if (inputEl.value != '') {
     browser.runtime.sendMessage(
       {
-        state: 'key',
+        state: 'submit-key',
         key: inputEl.value
       }
     ).then(({ message }) => {
@@ -103,15 +102,6 @@ generateBtn.onclick = () => {
     console.log(data);
     outputEl.textContent = "The key is : " + processInput(data.key) + " For the number: " + data.num;
   })
-}
-
-decryptBtn.onclick = () => {
-  console.log('decrypt button clicked');
-  browser.runtime.sendMessage(
-    {
-      state: 'decrypt-all-messages'
-    }
-  )
 }
 
 clearBtn.onclick = () => {

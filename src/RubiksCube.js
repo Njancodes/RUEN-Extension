@@ -1,4 +1,4 @@
-import { matrix, clone, pickRandom } from "./../node_modules/mathjs/lib/esm/index.js";
+import { matrix, clone, pickRandom } from "mathjs";
 
 function create3Matrix(def_value) {
     return matrix([[def_value, def_value, def_value], [def_value, def_value, def_value], [def_value, def_value, def_value]])

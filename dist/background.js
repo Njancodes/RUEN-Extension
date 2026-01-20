@@ -10,9 +10,9 @@
   };
   var __copyProps = (to, from, except, desc) => {
     if (from && typeof from === "object" || typeof from === "function") {
-      for (let key2 of __getOwnPropNames(from))
-        if (!__hasOwnProp.call(to, key2) && key2 !== except)
-          __defProp(to, key2, { get: () => from[key2], enumerable: !(desc = __getOwnPropDesc(from, key2)) || desc.enumerable });
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
     }
     return to;
   };
@@ -1073,29 +1073,29 @@
           }
           function getObjectName(obj) {
             let name11;
-            for (const key2 in obj) {
-              if (Object.prototype.hasOwnProperty.call(obj, key2) && (isTypedFunction(obj[key2]) || typeof obj[key2].signature === "string")) {
-                name11 = checkName(name11, obj[key2].name);
+            for (const key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key) && (isTypedFunction(obj[key]) || typeof obj[key].signature === "string")) {
+                name11 = checkName(name11, obj[key].name);
               }
             }
             return name11;
           }
           function mergeSignatures(dest, source) {
-            let key2;
-            for (key2 in source) {
-              if (Object.prototype.hasOwnProperty.call(source, key2)) {
-                if (key2 in dest) {
-                  if (source[key2] !== dest[key2]) {
-                    const err = new Error('Signature "' + key2 + '" is defined twice');
+            let key;
+            for (key in source) {
+              if (Object.prototype.hasOwnProperty.call(source, key)) {
+                if (key in dest) {
+                  if (source[key] !== dest[key]) {
+                    const err = new Error('Signature "' + key + '" is defined twice');
                     err.data = {
-                      signature: key2,
-                      sourceFunction: source[key2],
-                      destFunction: dest[key2]
+                      signature: key,
+                      sourceFunction: source[key],
+                      destFunction: dest[key]
                     };
                     throw err;
                   }
                 }
-                dest[key2] = source[key2];
+                dest[key] = source[key];
               }
             }
           }
@@ -1763,13 +1763,13 @@
       (function(global, pool, math) {
         var width = 256, chunks = 6, digits2 = 52, rngname = "random", startdenom = math.pow(width, chunks), significance = math.pow(2, digits2), overflow = significance * 2, mask = width - 1, nodecrypto;
         function seedrandom2(seed, options, callback) {
-          var key2 = [];
+          var key = [];
           options = options == true ? { entropy: true } : options || {};
           var shortseed = mixkey(flatten2(
             options.entropy ? [seed, tostring(pool)] : seed == null ? autoseed() : seed,
             3
-          ), key2);
-          var arc4 = new ARC4(key2);
+          ), key);
+          var arc4 = new ARC4(key);
           var prng = function() {
             var n = arc4.g(chunks), d = startdenom, x = 0;
             while (n < significance) {
@@ -1812,16 +1812,16 @@
             options.state
           );
         }
-        function ARC4(key2) {
-          var t, keylen = key2.length, me = this, i = 0, j = me.i = me.j = 0, s = me.S = [];
+        function ARC4(key) {
+          var t, keylen = key.length, me = this, i = 0, j = me.i = me.j = 0, s = me.S = [];
           if (!keylen) {
-            key2 = [keylen++];
+            key = [keylen++];
           }
           while (i < width) {
             s[i] = i++;
           }
           for (i = 0; i < width; i++) {
-            s[i] = s[j = mask & j + key2[i % keylen] + (t = s[i])];
+            s[i] = s[j = mask & j + key[i % keylen] + (t = s[i])];
             s[j] = t;
           }
           (me.g = function(count) {
@@ -1854,12 +1854,12 @@
           }
           return result.length ? result : typ == "string" ? obj : obj + "\0";
         }
-        function mixkey(seed, key2) {
+        function mixkey(seed, key) {
           var stringseed = seed + "", smear, j = 0;
           while (j < stringseed.length) {
-            key2[mask & j] = mask & (smear ^= key2[mask & j] * 19) + stringseed.charCodeAt(j++);
+            key[mask & j] = mask & (smear ^= key[mask & j] * 19) + stringseed.charCodeAt(j++);
           }
-          return tostring(key2);
+          return tostring(key);
         }
         function autoseed() {
           try {
@@ -2037,34 +2037,34 @@
       this[Symbol.iterator] = this.entries;
     }
     keys() {
-      return Object.keys(this.wrappedObject).filter((key2) => this.has(key2)).values();
+      return Object.keys(this.wrappedObject).filter((key) => this.has(key)).values();
     }
-    get(key2) {
-      return getSafeProperty(this.wrappedObject, key2);
+    get(key) {
+      return getSafeProperty(this.wrappedObject, key);
     }
-    set(key2, value) {
-      setSafeProperty(this.wrappedObject, key2, value);
+    set(key, value) {
+      setSafeProperty(this.wrappedObject, key, value);
       return this;
     }
-    has(key2) {
-      return isSafeProperty(this.wrappedObject, key2) && key2 in this.wrappedObject;
+    has(key) {
+      return isSafeProperty(this.wrappedObject, key) && key in this.wrappedObject;
     }
     entries() {
-      return mapIterator(this.keys(), (key2) => [key2, this.get(key2)]);
+      return mapIterator(this.keys(), (key) => [key, this.get(key)]);
     }
     forEach(callback) {
-      for (var key2 of this.keys()) {
-        callback(this.get(key2), key2, this);
+      for (var key of this.keys()) {
+        callback(this.get(key), key, this);
       }
     }
-    delete(key2) {
-      if (isSafeProperty(this.wrappedObject, key2)) {
-        delete this.wrappedObject[key2];
+    delete(key) {
+      if (isSafeProperty(this.wrappedObject, key)) {
+        delete this.wrappedObject[key];
       }
     }
     clear() {
-      for (var key2 of this.keys()) {
-        this.delete(key2);
+      for (var key of this.keys()) {
+        this.delete(key);
       }
     }
     get size() {
@@ -2254,9 +2254,9 @@
   }
   function mapObject(object, callback) {
     var clone5 = {};
-    for (var key2 in object) {
-      if (hasOwnProperty(object, key2)) {
-        clone5[key2] = callback(object[key2]);
+    for (var key in object) {
+      if (hasOwnProperty(object, key)) {
+        clone5[key] = callback(object[key]);
       }
     }
     return clone5;
@@ -2303,10 +2303,10 @@
   function pickShallow(object, properties) {
     var copy = {};
     for (var i = 0; i < properties.length; i++) {
-      var key2 = properties[i];
-      var value = object[key2];
+      var key = properties[i];
+      var value = object[key];
       if (value !== void 0) {
-        copy[key2] = value;
+        copy[key] = value;
       }
     }
     return copy;
@@ -7424,8 +7424,8 @@
       } else if (value && value.toString(options) !== {}.toString()) {
         return value.toString(options);
       } else {
-        var entries = Object.keys(value).map((key2) => {
-          return stringify(key2) + ": " + format3(value[key2], options);
+        var entries = Object.keys(value).map((key) => {
+          return stringify(key) + ": " + format3(value[key], options);
         });
         return "{" + entries.join(", ") + "}";
       }
@@ -10128,8 +10128,8 @@
         }
       }
     }
-    static generateInverseRandomMoves(key2) {
-      const moves = key2.match(/[A-Z]'?/g);
+    static generateInverseRandomMoves(key) {
+      const moves = key.match(/[A-Z]'?/g);
       const inverseMoves = [];
       moves.forEach((move) => {
         let inverseMove = "";
@@ -10178,20 +10178,19 @@
   var RubiksCube_default = Rubiks3Cube;
 
   // background.js
-  console.log("Background Hello");
-  var currTab = null;
-  var key = "";
-  var inversekey = "";
-  browser.action.onClicked.addListener((tab) => {
-    console.log("Clicked the browser action");
-    currTab = tab;
-    browser.tabs.sendMessage(
-      currTab.id,
-      {
-        state: "get-message"
+  console.log("The background.js has started...");
+  async function sendMessageToActiveTab(message) {
+    try {
+      const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+      if (!tabs[0]) {
+        throw new Error("No active tab found");
       }
-    );
-  });
+      return await browser.tabs.sendMessage(tabs[0].id, message);
+    } catch (err) {
+      console.error("Error: ", err);
+      throw err;
+    }
+  }
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.state === "encrypt") {
       console.log("BG RECIEVED");
@@ -10201,70 +10200,6 @@
       let cipher = "ENC:" + cube.readTextFromCube();
       console.log(cipher);
       sendResponse({ cipher });
-    }
-    if (message.state === "decrypt-all-messages") {
-      console.log("BG DAG RECIEVED");
-      browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-        if (tabs[0]) {
-          browser.tabs.sendMessage(tabs[0].id, {
-            state: "decrypt-all"
-          });
-        }
-      });
-    }
-    if (message.state === "gen-key") {
-      key = RubiksCube_default.generateRandomMoves(10);
-      inversekey = RubiksCube_default.generateInverseRandomMoves(key);
-      browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-        if (tabs[0]) {
-          browser.tabs.sendMessage(tabs[0].id, {
-            state: "get-num"
-          }).then(async (data) => {
-            const num = data.num;
-            browser.tabs.sendMessage(tabs[0].id, {
-              state: "store-key",
-              keycred: {
-                num: data.num,
-                key,
-                inversekey
-              }
-            });
-            sendResponse({ key, num });
-          });
-        }
-      }).catch((err) => {
-        console.error("Error: ", err);
-        sendResponse({ error: "Failed to get num" });
-      });
-      return true;
-    }
-    if (message.state == "key") {
-      key = message.key;
-      console.log(key);
-      inversekey = RubiksCube_default.generateInverseRandomMoves(message.key);
-      console.log(inversekey);
-      browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-        if (tabs[0]) {
-          browser.tabs.sendMessage(tabs[0].id, {
-            state: "get-num"
-          }).then(async (data) => {
-            const num = data.num;
-            browser.tabs.sendMessage(tabs[0].id, {
-              state: "store-key",
-              keycred: {
-                num: data.num,
-                key,
-                inversekey
-              }
-            });
-            sendResponse({ key, num });
-          });
-        }
-      }).catch((err) => {
-        console.error("Error: ", err);
-        sendResponse({ error: "Failed to get num" });
-      });
-      return true;
     }
     if (message.state === "decrypt") {
       let cube = new RubiksCube_default();
@@ -10276,6 +10211,50 @@
           sendResponse({ plain });
         }
       });
+      return true;
+    }
+    if (message.state === "gen-key") {
+      const key = RubiksCube_default.generateRandomMoves(10);
+      const inversekey = RubiksCube_default.generateInverseRandomMoves(key);
+      try {
+        (async () => {
+          const data = await sendMessageToActiveTab({ state: "get-num" });
+          const num = data.num;
+          await sendMessageToActiveTab({
+            state: "store-key",
+            keycred: {
+              num: data.num,
+              key,
+              inversekey
+            }
+          });
+          sendResponse({ key, num });
+        })();
+      } catch (error) {
+        sendResponse({ error: "Failed to get num" });
+      }
+      return true;
+    }
+    if (message.state == "submit-key") {
+      const key = message.key;
+      const inversekey = RubiksCube_default.generateInverseRandomMoves(message.key);
+      try {
+        (async () => {
+          const data = await sendMessageToActiveTab({ state: "get-num" });
+          const num = data.num;
+          await sendMessageToActiveTab({
+            state: "store-key",
+            keycred: {
+              num: data.num,
+              key,
+              inversekey
+            }
+          });
+          sendResponse({ key, num });
+        })();
+      } catch (error) {
+        sendResponse({ error: "Failed to get num" });
+      }
       return true;
     }
   });
