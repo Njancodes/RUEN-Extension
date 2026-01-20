@@ -7,8 +7,9 @@
     "gecko": {
       "id": "@RUEN-nexus",
       "data_collection_permissions": {
-        "required":[
-          "websiteContent","websiteActivity"
+        "required": [
+          "websiteContent",
+          "websiteActivity"
         ]
       }
     }
@@ -16,7 +17,7 @@
   "content_scripts": [
     {
       "matches": [
-        "https://web.whatsapp.com/"
+        "https://web.whatsapp.com/","file:///*"
       ],
       "js": [
         "dist/content.js"
