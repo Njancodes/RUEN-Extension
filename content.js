@@ -34,6 +34,8 @@ export async function decryptChatMessages(inversekey) {
         '#main [data-scrolltracepolicy="wa.web.conversation.messages"] [data-testid="selectable-text"]'
     );
 
+    console.log(chatMessages)
+
     const decryptPromises = Array.from(chatMessages)
         .filter(isEncryptedMessage)
         .map(chatMessage => decryptMessage(chatMessage, inversekey));

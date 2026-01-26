@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Web - Test Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #111b21;
+            color: #d1d7db;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 400px;
+            background: #111b21;
+            border-right: 1px solid #2a3942;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 15px;
+            background: #202c33;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #00a884;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #111b21;
+        }
+
+        .sidebar-icons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: #aebac1;
+            cursor: pointer;
+            font-size: 20px;
+            padding: 5px;
+        }
+
+        .icon-btn:hover {
+            color: #d1d7db;
+        }
+
+        .search-container {
+            padding: 10px;
+            background: #111b21;
+        }
+
+        .search-box {
+            background: #202c33;
+            border-radius: 8px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-box input {
+            background: none;
+            border: none;
+            color: #d1d7db;
+            flex: 1;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .search-box input::placeholder {
+            color: #667781;
+        }
+
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+            background: #111b21;
+        }
+
+        .chat-item {
+            padding: 12px 15px;
+            display: flex;
+            gap: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #202c33;
+            transition: background 0.2s;
+        }
+
+        .chat-item:hover {
+            background: #202c33;
+        }
+
+        .chat-item.active {
+            background: #2a3942;
+        }
+
+        .chat-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #00a884;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #111b21;
+            flex-shrink: 0;
+        }
+
+        .chat-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+        }
+
+        .chat-name {
+            font-weight: 500;
+            color: #e9edef;
+            font-size: 16px;
+        }
+
+        .chat-time {
+            font-size: 12px;
+            color: #667781;
+        }
+
+        .chat-preview {
+            font-size: 14px;
+            color: #667781;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Main Chat Area */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #0b141a;
+        }
+
+        .chat-header-main {
+            background: #202c33;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            height: 60px;
+            border-left: 1px solid #2a3942;
+        }
+
+        .header-info {
+            flex: 1;
+        }
+
+        .header-name {
+            font-weight: 500;
+            color: #e9edef;
+            font-size: 16px;
+        }
+
+        .header-status {
+            font-size: 13px;
+            color: #667781;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 20px;
+        }
+
+        /* Messages Area */
+        #main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 8%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect fill="%23202c33" width="100" height="100"/><path d="M0 0L50 50L0 100" stroke="%231a252d" stroke-width="0.5" fill="none"/><path d="M50 0L100 50L50 100" stroke="%231a252d" stroke-width="0.5" fill="none"/></svg>');
+            background-size: 400px 400px;
+        }
+
+        .message-container {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .message-container.outgoing {
+            flex-direction: row-reverse;
+        }
+
+        .message-bubble {
+            max-width: 65%;
+            padding: 6px 7px 8px 9px;
+            border-radius: 7.5px;
+            position: relative;
+            box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
+        }
+
+        .message-container.incoming .message-bubble {
+            background: #202c33;
+        }
+
+        .message-container.outgoing .message-bubble {
+            background: #005c4b;
+        }
+
+        .message-text {
+            color: #e9edef;
+            font-size: 14.2px;
+            line-height: 19px;
+            word-wrap: break-word;
+            margin-bottom: 2px;
+        }
+
+        .message-meta {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
+            margin-top: 4px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #667781;
+        }
+
+        .message-status {
+            font-size: 16px;
+            color: #53bdeb;
+        }
+
+        /* Input Area */
+        .input-area {
+            background: #202c33;
+            padding: 10px 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .input-actions-left {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            background: #2a3942;
+            border-radius: 8px;
+            padding: 10px 12px;
+            position: relative;
+        }
+
+        .message-input {
+            background: none;
+            border: none;
+            color: #e9edef;
+            width: 100%;
+            outline: none;
+            font-size: 15px;
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+            resize: none;
+            max-height: 100px;
+            overflow-y: auto;
+            line-height: 20px;
+        }
+
+        .message-input[contenteditable="true"]:empty:before {
+            content: "Type a message";
+            color: #667781;
+        }
+
+        .send-button-container {
+            position: relative;
+        }
+
+        .send-button {
+            background: none;
+            border: none;
+            color: #aebac1;
+            cursor: pointer;
+            font-size: 24px;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s;
+        }
+
+        .send-button:hover {
+            color: #d1d7db;
+        }
+
+        .send-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #374045;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #495057;
+        }
+
+        /* Icons (using Unicode) */
+        .icon-status::before { content: "◉"; }
+        .icon-new-chat::before { content: "✎"; }
+        .icon-menu::before { content: "⋮"; }
+        .icon-search::before { content: "🔍"; }
+        .icon-emoji::before { content: "😊"; }
+        .icon-attach::before { content: "📎"; }
+        .icon-send::before { content: "➤"; }
+        .icon-mic::before { content: "🎤"; }
+        .icon-video::before { content: "📹"; }
+        .icon-call::before { content: "📞"; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-avatar">ME</div>
+                <div class="sidebar-icons">
+                    <button class="icon-btn icon-status"></button>
+                    <button class="icon-btn icon-new-chat"></button>
+                    <button class="icon-btn icon-menu"></button>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <div class="search-box">
+                    <span class="icon-search" style="font-size: 14px;">🔍</span>
+                    <input type="text" placeholder="Search or start new chat">
+                </div>
+            </div>
+
+            <div class="chat-list">
+                <div class="chat-item active" data-id="contact_919876543210@c.us_919876543210">
+                    <div class="chat-avatar">JD</div>
+                    <div class="chat-info">
+                        <div class="chat-header">
+                            <div class="chat-name">John Doe</div>
+                            <div class="chat-time">12:45 PM</div>
+                        </div>
+                        <div class="chat-preview">Hey, how are you doing?</div>
+                    </div>
+                </div>
+
+                <div class="chat-item" data-id="contact_918765432109@c.us_918765432109">
+                    <div class="chat-avatar">AS</div>
+                    <div class="chat-info">
+                        <div class="chat-header">
+                            <div class="chat-name">Alice Smith</div>
+                            <div class="chat-time">11:30 AM</div>
+                        </div>
+                        <div class="chat-preview">See you tomorrow!</div>
+                    </div>
+                </div>
+
+                <div class="chat-item" data-id="contact_917654321098@c.us_917654321098">
+                    <div class="chat-avatar">BC</div>
+                    <div class="chat-info">
+                        <div class="chat-header">
+                            <div class="chat-name">Bob Cooper</div>
+                            <div class="chat-time">Yesterday</div>
+                        </div>
+                        <div class="chat-preview">Thanks for the update</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="chat-container">
+            <div class="chat-header-main">
+                <div class="chat-avatar">JD</div>
+                <div class="header-info">
+                    <div class="header-name">John Doe</div>
+                    <div class="header-status">online</div>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn icon-video"></button>
+                    <button class="icon-btn icon-call"></button>
+                    <button class="icon-btn icon-menu"></button>
+                </div>
+            </div>
+
+            <div id="main">
+                <div data-scrolltracepolicy="wa.web.conversation.messages">
+                    <div class="message-container incoming">
+                        <div class="message-bubble">
+                            <div class="message-text" data-testid="selectable-text">Hey! How's it going?</div>
+                            <div class="message-meta">
+                                <span class="message-time">12:30 PM</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="message-container outgoing">
+                        <div class="message-bubble">
+                            <div class="message-text" data-testid="selectable-text">Pretty good! Working on some projects.</div>
+                            <div class="message-meta">
+                                <span class="message-time">12:32 PM</span>
+                                <span class="message-status">✓✓</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="message-container incoming">
+                        <div class="message-bubble">
+                            <div class="message-text" data-testid="selectable-text">ENC:U2FsdGVkX1+abc123def456ghi789</div>
+                            <div class="message-meta">
+                                <span class="message-time">12:33 PM</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="message-container outgoing">
+                        <div class="message-bubble">
+                            <div class="message-text" data-testid="selectable-text">ENC:U2FsdGVkX1+xyz987wvu654tsr321</div>
+                            <div class="message-meta">
+                                <span class="message-time">12:35 PM</span>
+                                <span class="message-status">✓✓</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="message-container incoming">
+                        <div class="message-bubble">
+                            <div class="message-text" data-testid="selectable-text">That sounds interesting!</div>
+                            <div class="message-meta">
+                                <span class="message-time">12:45 PM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <div class="input-actions-left">
+                    <button class="icon-btn icon-emoji"></button>
+                    <button class="icon-btn icon-attach"></button>
+                </div>
+
+                <div class="input-wrapper">
+                    <div class="message-input" contenteditable="true" data-tab="10">
+                        <span class="xkrh14z"></span>
+                    </div>
+                </div>
+
+                <div class="send-button-container">
+                    <button class="send-button icon-send" aria-label="Send"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize the contenteditable structure
+        const messageInput = document.querySelector('.message-input');
+        const span = messageInput.querySelector('.xkrh14z');
+        
+        // Initialize with empty text node
+        if (!span.childNodes.length) {
+            span.appendChild(document.createTextNode(''));
+        }
+        
+        // Handle input - keep text only in the span's text node
+        messageInput.addEventListener('input', (e) => {
+            // Get all text content from the div
+            let fullText = '';
+            const walker = document.createTreeWalker(
+                messageInput,
+                NodeFilter.SHOW_TEXT,
+                null,
+                false
+            );
+            
+            let node;
+            while (node = walker.nextNode()) {
+                fullText += node.data;
+            }
+            
+            // Clear everything in messageInput
+            while (messageInput.firstChild) {
+                messageInput.removeChild(messageInput.firstChild);
+            }
+            
+            // Re-add just the span with updated text node
+            const newSpan = document.createElement('span');
+            newSpan.className = 'xkrh14z';
+            const textNode = document.createTextNode(fullText);
+            newSpan.appendChild(textNode);
+            messageInput.appendChild(newSpan);
+            
+            // Move cursor to end
+            const range = document.createRange();
+            const sel = window.getSelection();
+            
+            if (textNode.length > 0) {
+                range.setStart(textNode, textNode.length);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+        });
+
+        messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.querySelector('.send-button').click();
+            }
+        });
+
+        // Handle send button
+        document.querySelector('.send-button').addEventListener('click', () => {
+            const span = messageInput.querySelector('.xkrh14z');
+            const textNode = span.childNodes[0];
+            const text = textNode ? textNode.data.trim() : '';
+            
+            if (!text) return;
+
+            // Add message to chat - append to the div with data-scrolltracepolicy
+            const messagesContainer = document.querySelector('#main [data-scrolltracepolicy="wa.web.conversation.messages"]');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message-container outgoing';
+            
+            const now = new Date();
+            const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+            
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    <div class="message-text" data-testid="selectable-text">${text}</div>
+                    <div class="message-meta">
+                        <span class="message-time">${time}</span>
+                        <span class="message-status">✓</span>
+                    </div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            document.getElementById('main').scrollTop = document.getElementById('main').scrollHeight;
+
+            // Clear input
+            while (messageInput.firstChild) {
+                messageInput.removeChild(messageInput.firstChild);
+            }
+            const newSpan = document.createElement('span');
+            newSpan.className = 'xkrh14z';
+            newSpan.appendChild(document.createTextNode(''));
+            messageInput.appendChild(newSpan);
+            messageInput.focus();
+
+            // Simulate message sent (single checkmark to double checkmark)
+            setTimeout(() => {
+                const status = messageDiv.querySelector('.message-status');
+                if (status) status.textContent = '✓✓';
+            }, 500);
+        });
+
+        // Handle chat selection
+        document.querySelectorAll('.chat-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.chat-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                const name = this.querySelector('.chat-name').textContent;
+                const avatar = this.querySelector('.chat-avatar').textContent;
+                
+                document.querySelector('.header-name').textContent = name;
+                document.querySelector('.chat-header-main .chat-avatar').textContent = avatar;
+            });
+        });
+
+        // Auto-scroll to bottom
+        const mainContainer = document.getElementById('main');
+        mainContainer.scrollTop = mainContainer.scrollHeight;
+
+        // Simulate receiving a message after 5 seconds
+        setTimeout(() => {
+            const messagesContainer = document.querySelector('#main [data-scrolltracepolicy="wa.web.conversation.messages"]');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message-container incoming';
+            const now = new Date();
+            const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+            
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    <div class="message-text" data-testid="selectable-text">This is a test message!</div>
+                    <div class="message-meta">
+                        <span class="message-time">${time}</span>
+                    </div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            mainContainer.scrollTop = mainContainer.scrollHeight;
+        }, 5000);
+    </script>
+</body>
+</html>

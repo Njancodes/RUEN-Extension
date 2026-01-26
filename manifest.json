@@ -5,7 +5,7 @@
   "description": "Encrypt your whatsapp messsages before sending it.",
   "browser_specific_settings": {
     "gecko": {
-      "id": "@RUEN-nexus",
+      "id": "ruen-nexus@nijo.com",
       "data_collection_permissions": {
         "required": [
           "websiteContent",

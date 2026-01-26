@@ -28,6 +28,7 @@
     const chatMessages = document.querySelectorAll(
       '#main [data-scrolltracepolicy="wa.web.conversation.messages"] [data-testid="selectable-text"]'
     );
+    console.log(chatMessages);
     const decryptPromises = Array.from(chatMessages).filter(isEncryptedMessage).map((chatMessage) => decryptMessage(chatMessage, inversekey));
     await Promise.all(decryptPromises);
   }
@@ -136,7 +137,6 @@
         e.stopPropagation();
         const messageInput = document.querySelector('div[contenteditable="true"][data-tab="10"]');
         const messageText = messageInput?.textContent || "";
-        messageInput.textContent = "";
         const elementsWithDataId = document.body.querySelectorAll("[data-id]");
         let num;
         if (elementsWithDataId.length > 0) {
@@ -149,7 +149,6 @@
           clientMessage: messageText,
           key
         }).then((data) => {
-          console.log(document.querySelectorAll("span.xkrh14z"));
           const inputMessage = document.querySelectorAll("span.xkrh14z")[0].childNodes[0];
           inputMessage.data = data.cipher;
           setTimeout(async () => {

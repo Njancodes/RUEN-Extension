@@ -2,3 +2,5 @@ node_modules
 popupui.png
 dist
 web-ext-artifacts
+*.xpi 
+*.zip
