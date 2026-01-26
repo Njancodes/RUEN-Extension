@@ -4,3 +4,4 @@ dist
 web-ext-artifacts
 *.xpi 
 *.zip
+__pycache__
