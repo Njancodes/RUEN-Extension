@@ -5,3 +5,4 @@ web-ext-artifacts
 *.xpi 
 *.zip
 __pycache__
+.pytest_cache
