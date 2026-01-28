@@ -5,9 +5,10 @@
   "main": "rotatingcubes.js",
   "scripts": {
     "test:unit": "jest --verbose",
-    "test:security": "web-ext lint",
-    "performance": "firefox https://share.firefox.dev/3Z78wRH",
-    "test": "npm run test:unit && npm run test:security && npm run performance",
+    "test:security": "web-ext lint -i __tests__",
+    "test:performance": "firefox https://share.firefox.dev/3Z78wRH",
+    "test:e2e":"pytest -v",
+    "test": "npm run test:unit && npm run test:security && npm run test:e2e && npm run test:performance ",
     "build": "func() { node dev-tools/build.js && web-ext build -o -n \"$1\".zip; }; func"
   },
   "repository": {

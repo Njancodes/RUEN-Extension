@@ -6,6 +6,7 @@ import logging
 import time
 from dataclasses import dataclass
 import pyperclip
+import os
 
 MAX_NUMBER_OF_BUTTONS_TO_ADD = 2
 
@@ -27,12 +28,15 @@ def browser_setup():
     logger.info("Setting up firefox with the extension and loading up the fake whatsapp website")
     driver = webdriver.Firefox()
 
-    # Remember to hide this with directory names and shit
-    driver.get("file:///home/nijo/CODe/JS/RUEN/RUEN-Extension/__tests__/e2ePy/fakewhatsapp.html")
-    driver.install_addon("./tstsel.xpi", True)
+    directory = os.path.abspath("__tests__/e2ePy")
+    fakewhatsappPath = f"{directory}/fakewhatsapp.html"
+    tstselPath = f"{directory}/tstsel.xpi"
+
+    driver.get(f"file://{fakewhatsappPath}")
+    driver.install_addon(tstselPath, True)
     time.sleep(1)
 
-    yield driver
+    yield driver, directory
 
     logger.info("Stopping the driver")
     driver.quit()
@@ -40,31 +44,35 @@ def browser_setup():
 @pytest.fixture(scope="module")
 def test_data(browser_setup):
 
-    driver = browser_setup
+    driver, directory = browser_setup
 
     logger.info("Click the extension icon")
-    location = pyautogui.locateCenterOnScreen("extensionIcon.png", confidence=0.8)
+    extension_icon_path = f"{directory}/extensionIcon.png"
+    location = pyautogui.locateCenterOnScreen(extension_icon_path, confidence=0.8)
     pyautogui.moveTo(location.x, location.y)
     pyautogui.click()
 
     time.sleep(1)
 
     logger.info("Click the whatsapp icon")
-    location = pyautogui.locateCenterOnScreen("whatsappIcon.png", confidence=0.8)
+    whatsapp_icon_path = f"{directory}/whatsappIcon.png"
+    location = pyautogui.locateCenterOnScreen(whatsapp_icon_path, confidence=0.8)
     pyautogui.moveTo(location.x, location.y)
     pyautogui.click()
 
     time.sleep(1)
 
     logger.info("Click the input box")
-    location = pyautogui.locateCenterOnScreen("inputClick.png", confidence=0.8)
+    input_click_path = f"{directory}/inputClick.png"
+    location = pyautogui.locateCenterOnScreen(input_click_path, confidence=0.8)
     pyautogui.moveTo(location.x, location.y)
     pyautogui.click()
     logger.info("Enter the hardcoded key")
     pyautogui.write("R R R R R R")
 
     logger.info("Submit the key")
-    location = pyautogui.locateCenterOnScreen("submitBtn.png", confidence=0.8)
+    submit_btn_path = f"{directory}/submitBtn.png"
+    location = pyautogui.locateCenterOnScreen(submit_btn_path, confidence=0.8)
     pyautogui.moveTo(location.x, location.y)
     pyautogui.click()
 
@@ -73,7 +81,8 @@ def test_data(browser_setup):
     enterMsg.send_keys("This is a message for testing purposes")
 
     logger.info("Send the message")
-    location = pyautogui.locateCenterOnScreen("sendBtn.png", confidence=0.8)
+    send_btn_path = f"{directory}/sendBtn.png"
+    location = pyautogui.locateCenterOnScreen(send_btn_path, confidence=0.8)
     pyautogui.moveTo(location.x, location.y)
     pyautogui.click()
 
@@ -100,7 +109,8 @@ def test_data(browser_setup):
     time.sleep(1)
 
     logger.info("Get the internal UUID")
-    location = pyautogui.locateOnScreen("internalUUIDBtn.png", confidence = 0.8)
+    internal_UUID_btn_path = f"{directory}/internalUUIDBtn.png"
+    location = pyautogui.locateOnScreen(internal_UUID_btn_path, confidence = 0.8)
     pyautogui.moveTo(location.left, location.top + location.height / 2)
     pyautogui.dragTo(location.left+1000,(location.top + location.height / 2), button='left')
     pyautogui.hotkey('ctrl', 'c')
