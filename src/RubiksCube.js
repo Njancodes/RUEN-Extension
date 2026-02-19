@@ -533,6 +533,34 @@ class Rubiks3Cube {
     }
 }
 
+// let plaintext = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a odio quis nibh finibus sagittis ut vel libero. In felis diam, luctus vitae justo a, lobortis pretium dui. Curabitur ultrices erat ut semper accumsan. Fusce sodales, elit vel vehicula vehicula, augue lectus blandit ante, eget mattis magna urna vel dolor. Donec at turpis condimentum, hendrerit massa quis, tincidunt nibh. Nullam fringilla non mi in posuere. Aenean mattis nec dui eu volutpat. Vivamus sagittis diam in viverra commodo. Curabitur vehicula, lacus sed scelerisque hendrerit, lectus nunc consectetur nisi, sit amet gravida mi magna nec justo. Aliquam accumsan, erat sit amet pharetra pretium, lacus est fringilla nisl, eu sollicitudin libero dui sit amet leo. Phasellus nisi justo, auctor a eros in, accumsan rutrum nisl. Vivamus gravida at quam nec hendrerit.
+
+// Morbi dui felis, convallis vitae luctus non, finibus viverra arcu. Vestibulum eget libero tincidunt, venenatis quam quis, placerat ex. Cras fringilla sit amet purus sed tempor. Phasellus vitae iaculis sapien. Sed ut ligula nec odio imperdiet facilisis in ut elit. Nunc bibendum, dolor non sollicitudin dictum, massa tortor iaculis mauris, sit amet tristique lorem eros a risus. Maecenas ac mattis enim. In augue massa, vulputate vel mauris sit amet, suscipit commodo sapien. Donec tempus ex sit amet tempor interdum. Duis posuere, metus ut rhoncus ornare, urna massa blandit leo, vel aliquam mi risus eget dolor. Maecenas semper, ligula sed scelerisque aliquam, augue ipsum rutrum lorem, vitae consectetur massa velit vulputate nibh. Curabitur fringilla tincidunt venenatis. Curabitur dolor dolor, eleifend nec ipsum eget, posuere tincidunt dolor. Nulla sed dui id sem suscipit sodales. Ut congue pulvinar metus vitae vulputate. Fusce semper a nunc quis malesuada.
+
+// Vivamus posuere, nunc egestas tincidunt sodales, tellus ante posuere risus, eu fermentum augue quam vel mi. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque efficitur risus urna, quis blandit tortor consectetur at. Pellentesque sollicitudin interdum ex, eget accumsan purus molestie sed. Vivamus sit amet consectetur lorem. Pellentesque luctus, est non pellentesque eleifend, dolor velit imperdiet felis, et blandit risus enim eget tortor. Suspendisse tincidunt at neque a commodo. Ut lobortis est a mi vulputate molestie. Donec vel risus facilisis, tempor odio at, posuere metus. Fusce quis justo ac tortor vulputate facilisis quis sit amet elit. Duis cursus sed quam non vestibulum. Integer dignissim sollicitudin mi ut interdum. `
+// let ciphertext = ''
 
 
+// let j = 0
+// console.log(Math.ceil(plaintext.length / 54))
+// console.time('encrypt');
+// for (let i = 0; i < Math.ceil(plaintext.length / 54); i++) {
+//     let cube = new Rubiks3Cube();
+//     cube.writeTextToCube(plaintext.slice(j, j + 54));
+//     cube.executeMoves('R L D U')
+//     j += 54;
+//     ciphertext += cube.readTextFromCube();
+// }
+// console.timeEnd('encrypt');
+
+// j = 0;
+// console.time('decrypt');
+// for (let i = 0; i < Math.ceil(plaintext.length / 54); i++) {
+//     let cube = new Rubiks3Cube();
+//     cube.writeTextToCube(ciphertext.slice(j, j + 54));
+//     cube.executeMoves("U' D' L' R'");
+//     j += 54;
+//     console.log(cube.readTextFromCube());
+// }
+// console.timeEnd('decrypt');
 export default Rubiks3Cube;

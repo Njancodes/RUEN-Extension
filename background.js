@@ -20,24 +20,13 @@ async function sendMessageToActiveTab(message) {
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.state === 'encrypt') {
         console.log('BG RECIEVED');
-        let cube = new Rubiks3Cube();
-        cube.writeTextToCube(message.clientMessage);
-        cube.executeMoves(message.key);
-
-        let cipher = "ENC:" + cube.readTextFromCube();
-        console.log(cipher);
-        sendResponse({ cipher });
+        sendResponse({ cipher: encryptMessage(message.clientMessage, message.key) });
     }
     if (message.state === 'decrypt') {
-        let cube = new Rubiks3Cube();
         browser.tabs.query({ active: true, currentWindow: true })
             .then(tabs => {
                 if (tabs[0]) {
-                    cube.writeTextToCube(message.clientMessage);
-                    cube.executeMoves(message.inversekey);
-
-                    let plain = cube.readTextFromCube();
-                    sendResponse({ plain });
+                    sendResponse({ plain: decryptMessage(message.clientMessage, message.inversekey) });
                 }
             });
         return true;
@@ -91,3 +80,31 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     }
 })
+
+export function encryptMessage(plaintext, key) {
+    let ciphertext = "ENC:";
+    let j = 0;
+
+    for (let i = 0; i < Math.ceil(plaintext.length / 54); i++) {
+        let cube = new Rubiks3Cube();
+        cube.writeTextToCube(plaintext.slice(j, j + 54));
+        cube.executeMoves(key);
+        j += 54;
+        ciphertext += cube.readTextFromCube();
+    }
+
+    return ciphertext;
+}
+
+export function decryptMessage(ciphertext, inversekey) {
+    let j = 0;
+    let plaintext = "";
+    for (let i = 0; i < Math.ceil(ciphertext.length / 54); i++) {
+        let cube = new Rubiks3Cube();
+        cube.writeTextToCube(ciphertext.slice(j, j + 54));
+        cube.executeMoves(inversekey);
+        j += 54;
+        plaintext += cube.readTextFromCube()
+    }
+    return plaintext;
+}
