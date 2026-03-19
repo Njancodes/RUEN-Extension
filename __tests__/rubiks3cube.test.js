@@ -204,31 +204,31 @@ describe('Rubiks3Cube', () => {
         });
     });
 
-    describe('generateInverseRandomMoves', () => {
+    describe('generateInverseMoves', () => {
         test('should invert simple move', () => {
-            const inverse = Rubiks3Cube.generateInverseRandomMoves('R');
+            const inverse = Rubiks3Cube.generateInverseMoves('R');
             expect(inverse).toBe("R'");
         });
 
         test('should invert prime move', () => {
-            const inverse = Rubiks3Cube.generateInverseRandomMoves("R'");
+            const inverse = Rubiks3Cube.generateInverseMoves("R'");
             expect(inverse).toBe('R');
         });
 
         test('should invert sequence of moves', () => {
-            const inverse = Rubiks3Cube.generateInverseRandomMoves("R U F");
+            const inverse = Rubiks3Cube.generateInverseMoves("R U F");
             expect(inverse).toBe("F' U' R'");
         });
 
         test('should invert complex sequence', () => {
-            const inverse = Rubiks3Cube.generateInverseRandomMoves("R U' F L' D B'");
+            const inverse = Rubiks3Cube.generateInverseMoves("R U' F L' D B'");
             expect(inverse).toBe("B D' L F' U R'");
         });
 
         test('should be reversible', () => {
             const original = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOP';
             const moves = Rubiks3Cube.generateRandomMoves(10);
-            const inverseMoves = Rubiks3Cube.generateInverseRandomMoves(moves);
+            const inverseMoves = Rubiks3Cube.generateInverseMoves(moves);
 
             cube.writeTextToCube(original);
             cube.executeMoves(moves);
@@ -239,7 +239,7 @@ describe('Rubiks3Cube', () => {
         });
 
         test('should handle single character moves', () => {
-            const inverse = Rubiks3Cube.generateInverseRandomMoves("R L U D F B");
+            const inverse = Rubiks3Cube.generateInverseMoves("R L U D F B");
             expect(inverse).toBe("B' F' D' U' L' R'");
         });
     });
@@ -248,7 +248,7 @@ describe('Rubiks3Cube', () => {
         test('should encrypt and decrypt text using random key', () => {
             const plaintext = 'SECRET MESSAGE';
             const key = Rubiks3Cube.generateRandomMoves(15);
-            const inverseKey = Rubiks3Cube.generateInverseRandomMoves(key);
+            const inverseKey = Rubiks3Cube.generateInverseMoves(key);
 
             // Encrypt
             const encryptCube = new Rubiks3Cube();
@@ -286,7 +286,7 @@ describe('Rubiks3Cube', () => {
         test('should handle long messages', () => {
             const plaintext = 'A'.repeat(50);
             const key = Rubiks3Cube.generateRandomMoves(20);
-            const inverseKey = Rubiks3Cube.generateInverseRandomMoves(key);
+            const inverseKey = Rubiks3Cube.generateInverseMoves(key);
 
             const encryptCube = new Rubiks3Cube();
             encryptCube.writeTextToCube(plaintext);

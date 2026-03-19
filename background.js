@@ -33,7 +33,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
     if (message.state === 'gen-key') {
         const key = Rubiks3Cube.generateRandomMoves(10);
-        const inversekey = Rubiks3Cube.generateInverseRandomMoves(key);
+        const inversekey = Rubiks3Cube.generateInverseMoves(key);
         try {
             (async () => {
                 const data = await sendMessageToActiveTab({ state: 'get-num' });
@@ -57,7 +57,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
     if (message.state == 'submit-key') {
         const key = message.key;
-        const inversekey = Rubiks3Cube.generateInverseRandomMoves(message.key);
+        const inversekey = Rubiks3Cube.generateInverseMoves(message.key);
         try {
             (async () => {
                 const data = await sendMessageToActiveTab({ state: 'get-num' });

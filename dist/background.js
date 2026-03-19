@@ -10128,7 +10128,7 @@
         }
       }
     }
-    static generateInverseRandomMoves(key) {
+    static generateInverseMoves(key) {
       const moves = key.match(/[A-Z]'?/g);
       const inverseMoves = [];
       moves.forEach((move) => {
@@ -10194,28 +10194,19 @@
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.state === "encrypt") {
       console.log("BG RECIEVED");
-      let cube = new RubiksCube_default();
-      cube.writeTextToCube(message.clientMessage);
-      cube.executeMoves(message.key);
-      let cipher = "ENC:" + cube.readTextFromCube();
-      console.log(cipher);
-      sendResponse({ cipher });
+      sendResponse({ cipher: encryptMessage(message.clientMessage, message.key) });
     }
     if (message.state === "decrypt") {
-      let cube = new RubiksCube_default();
       browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
         if (tabs[0]) {
-          cube.writeTextToCube(message.clientMessage);
-          cube.executeMoves(message.inversekey);
-          let plain = cube.readTextFromCube();
-          sendResponse({ plain });
+          sendResponse({ plain: decryptMessage(message.clientMessage, message.inversekey) });
         }
       });
       return true;
     }
     if (message.state === "gen-key") {
       const key = RubiksCube_default.generateRandomMoves(10);
-      const inversekey = RubiksCube_default.generateInverseRandomMoves(key);
+      const inversekey = RubiksCube_default.generateInverseMoves(key);
       try {
         (async () => {
           const data = await sendMessageToActiveTab({ state: "get-num" });
@@ -10237,7 +10228,7 @@
     }
     if (message.state == "submit-key") {
       const key = message.key;
-      const inversekey = RubiksCube_default.generateInverseRandomMoves(message.key);
+      const inversekey = RubiksCube_default.generateInverseMoves(message.key);
       try {
         (async () => {
           const data = await sendMessageToActiveTab({ state: "get-num" });
@@ -10258,6 +10249,30 @@
       return true;
     }
   });
+  function encryptMessage(plaintext, key) {
+    let ciphertext = "ENC:";
+    let j = 0;
+    for (let i = 0; i < Math.ceil(plaintext.length / 54); i++) {
+      let cube = new RubiksCube_default();
+      cube.writeTextToCube(plaintext.slice(j, j + 54));
+      cube.executeMoves(key);
+      j += 54;
+      ciphertext += cube.readTextFromCube();
+    }
+    return ciphertext;
+  }
+  function decryptMessage(ciphertext, inversekey) {
+    let j = 0;
+    let plaintext = "";
+    for (let i = 0; i < Math.ceil(ciphertext.length / 54); i++) {
+      let cube = new RubiksCube_default();
+      cube.writeTextToCube(ciphertext.slice(j, j + 54));
+      cube.executeMoves(inversekey);
+      j += 54;
+      plaintext += cube.readTextFromCube();
+    }
+    return plaintext;
+  }
 })();
 /*! Bundled license information:
 

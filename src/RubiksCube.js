@@ -473,7 +473,7 @@ class Rubiks3Cube {
         }
     }
 
-    static generateInverseRandomMoves(key) {
+    static generateInverseMoves(key) {
         const moves = key.match(/[A-Z]'?/g);
         const inverseMoves = [];
         moves.forEach((move) => {
