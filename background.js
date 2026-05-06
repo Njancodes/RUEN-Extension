@@ -36,22 +36,22 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         const inversekey = Rubiks3Cube.generateInverseRandomMoves(key);
         try {
             (async () => {
-                const data = await sendMessageToActiveTab({ state: 'get-num' });
-                const num = data.num;
+                const data = await sendMessageToActiveTab({ state: 'get-name' });
+                const name = data.name;
 
                 await sendMessageToActiveTab({
                     state: 'store-key',
                     keycred: {
-                        num: data.num,
+                        name,
                         key,
                         inversekey
                     }
                 })
 
-                sendResponse({ key, num });
+                sendResponse({ key, name });
             })()
         } catch (error) {
-            sendResponse({ error: 'Failed to get num' });
+            sendResponse({ error: 'Failed to get name' });
         }
         return true;
     }
@@ -60,22 +60,22 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         const inversekey = Rubiks3Cube.generateInverseRandomMoves(message.key);
         try {
             (async () => {
-                const data = await sendMessageToActiveTab({ state: 'get-num' });
-                const num = data.num;
+                const data = await sendMessageToActiveTab({ state: 'get-name' });
+                const name = data.name;
 
                 await sendMessageToActiveTab({
                     state: 'store-key',
                     keycred: {
-                        num: data.num,
+                        name,
                         key,
                         inversekey
                     }
                 })
 
-                sendResponse({ key, num });
+                sendResponse({ key, name });
             })()
         } catch (error) {
-            sendResponse({ error: 'Failed to get num' });
+            sendResponse({ error: 'Failed to get name' });
         }
         return true;
     }

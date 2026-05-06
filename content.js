@@ -78,14 +78,15 @@ export function waitForElm(selector, callback) {
 // Message handler function (exported for testing if needed)
 export function setupMessageListener() {
     browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        if (message.state === 'get-num') {
-            console.log('GET NUM EVENT RECIEVED');
-            const elementsWithDataId = document.body.querySelectorAll('[data-id]');
-            let num;
+        if (message.state === 'get-name') {
+            console.log('GET NAME EVENT RECIEVED');
+            const elementsWithDataId = document.body.querySelectorAll('[data-testid=conversation-info-header-chat-title]');
+            console.log(elementsWithDataId);
+            let name;
             if (elementsWithDataId.length > 0) {
-                num = elementsWithDataId[0].getAttribute('data-id').match(/_(\d+)/);
+                name = elementsWithDataId[0].textContent;
             }
-            sendResponse({ num: num[1] });
+            sendResponse({ name });
         }
         if (message.state === 'get-key') {
             const elementsWithDataId = document.body.querySelectorAll('[data-id]');
@@ -106,7 +107,7 @@ export function setupMessageListener() {
         if (message.state === 'store-key') {
             console.log("KEY RECIEVED");
             browser.storage.local.set({
-                [message.keycred.num]: {
+                [message.keycred.name]: {
                     key: message.keycred.key,
                     inversekey: message.keycred.inversekey
                 },
@@ -168,12 +169,12 @@ export function setupSendButton() {
 
             const messageInput = document.querySelector('div[contenteditable="true"][data-tab="10"]');
             const messageText = messageInput?.textContent || '';
-            const elementsWithDataId = document.body.querySelectorAll('[data-id]');
-            let num;
+            const elementsWithDataId = document.body.querySelectorAll('[data-testid=conversation-info-header-chat-title]');
+            let name;
             if (elementsWithDataId.length > 0) {
-                num = elementsWithDataId[0].getAttribute('data-id').match(/_(\d+)/);
+                name = elementsWithDataId[0].textContent;
             }
-            const keyData = await browser.storage.local.get(num);
+            const keyData = await browser.storage.local.get(name);
             const key = Object.values(keyData)[0].key;
             browser.runtime.sendMessage({
                 state: 'encrypt',
@@ -188,8 +189,8 @@ export function setupSendButton() {
             })
 
             setTimeout(async () => {
-                const keyCred = await browser.storage.local.get(num[1]);
-                let inversekey = keyCred[num[1]].inversekey;
+                const keyCred = await browser.storage.local.get(name);
+                let inversekey = keyCred[name].inversekey;
                 await decryptChatMessages(inversekey);
             }, 1000)
         });

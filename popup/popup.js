@@ -5,17 +5,20 @@ const generateBtn = document.getElementById('generateKey');
 const decryptBtn = document.getElementById('decrypt');
 const clearBtn = document.getElementById('clearBtn');
 
+const createID = (name) => name.toLowerCase().replace(/\s+/g, '-');
+
 document.addEventListener('DOMContentLoaded', () => {
   setInterval(async () => {
-    const numbers = await browser.storage.local.getKeys();
-    for (const number of numbers) {
-      if (document.body.querySelector(`li#num${number}`)) {
+    const names = await browser.storage.local.getKeys();
+    console.log(document.body.querySelector(`li`));
+    for (const name of names) {
+      if (document.body.querySelector(`li#${createID(name)}`)) {
         continue;
       }
       const nkList = document.getElementById('number-key-list');
 
-      const keyCred = (await browser.storage.local.get(number))[number];
-
+      const keyCred = (await browser.storage.local.get(name))[name];
+      console.log("keyCred", keyCred);
       const key = keyCred.key;
 
       const toggleSwitch = document.createElement("input");
@@ -35,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
               state: 'check',
               num: number,
               inversekey
-            }).then(async ({isAcc}) => {
+            }).then(async ({ isAcc }) => {
               console.log('The value of isAcc is: ', isAcc);
               if (isAcc) {
                 console.log('Enabled');
@@ -57,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       })
       const boldNumber = document.createElement("strong");
-      boldNumber.textContent = number;
+      boldNumber.textContent = name;
       const codeKey = document.createElement("code");
       codeKey.textContent = key;
 
@@ -65,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const liTag = document.createElement("li");
       liTag.className = "li-tag";
       liTag.classList.add("disabled");
-      liTag.id = "num" + number;
+      liTag.id = createID(name);
       liTag.appendChild(toggleSwitch);
       liTag.appendChild(boldNumber);
       liTag.appendChild(codeKey);
@@ -100,7 +103,7 @@ generateBtn.onclick = () => {
     }
   ).then(async (data) => {
     console.log(data);
-    outputEl.textContent = "The key is : " + processInput(data.key) + " For the number: " + data.num;
+    outputEl.textContent = "The key is : " + processInput(data.key) + " For the name: " + data.name;
   })
 }
 
